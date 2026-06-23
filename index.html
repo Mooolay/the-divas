@@ -1,9 +1,11 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Team Subs">
 <meta name="theme-color" content="#d12f2f">
 <title>Team Subs Manager</title>
 <style>
@@ -14,24 +16,23 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    background:var(--bg);color:var(--ink);font-size:16px;-webkit-text-size-adjust:100%;}
-  header{background:var(--red);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:20;
-    display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 6px rgba(0,0,0,.15);}
-  header h1{font-size:18px;margin:0;font-weight:700;}
-  header .sub{font-size:12px;opacity:.85;font-weight:400;}
-  .wrap{max-width:560px;margin:0 auto;padding:14px 14px 90px;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;-webkit-text-size-adjust:100%;}
+  header{background:var(--red);color:#fff;padding:12px 16px;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;box-shadow:0 2px 6px rgba(0,0,0,.15);}
+  .crest{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;}
+  header h1{font-size:17px;margin:0;font-weight:700;line-height:1.1;}
+  header .sub{font-size:11px;opacity:.85;font-weight:400;}
+  header .hgrow{flex:1;min-width:0;}
+  header h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .wrap{max-width:560px;margin:0 auto;padding:14px 14px 92px;}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
-  h2{font-size:15px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  h2{font-size:14px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
   button{font-family:inherit;font-size:15px;cursor:pointer;border:none;border-radius:10px;padding:11px 14px;font-weight:600;}
-  .btn{background:var(--red);color:#fff;}
-  .btn:active{background:var(--red-d);}
+  .btn{background:var(--red);color:#fff;} .btn:active{background:var(--red-d);}
   .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
   .btn-grass{background:var(--grass);color:#fff;}
-  .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
-  .btn-row > button{flex:1;}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;} .btn-row > button{flex:1;}
   label.fld{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px;font-weight:600;}
-  select,input[type=number],input[type=text]{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:#fff;font-family:inherit;}
+  select,input[type=number],input[type=text],input[type=color]{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:#fff;font-family:inherit;}
   .tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom);}
   .tabs button{flex:1;background:none;color:var(--muted);font-size:11px;font-weight:600;padding:8px 2px;border-radius:0;display:flex;flex-direction:column;align-items:center;gap:3px;}
   .tabs button .ic{font-size:20px;line-height:1;}
@@ -40,8 +41,7 @@
   .prow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
   .prow:last-child{border-bottom:none;}
   .avatar{width:38px;height:38px;border-radius:50%;background:#d9d9de;color:#555;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
-  .pname{font-weight:600;font-size:15px;}
-  .pmeta{font-size:12px;color:var(--muted);}
+  .pname{font-weight:600;font-size:15px;} .pmeta{font-size:12px;color:var(--muted);}
   .grow{flex:1;min-width:0;}
   .rate-pill{font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:#eef;color:#3340a0;font-variant-numeric:tabular-nums;}
   .toggle{width:50px;height:30px;border-radius:30px;background:#d2d2d8;position:relative;transition:.15s;flex-shrink:0;}
@@ -67,14 +67,16 @@
   .bchip .av{width:40px;height:40px;border-radius:50%;background:#e9e9ee;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
   .bchip.sel{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,209,.35);}
   .bchip.on{border-color:var(--grass);box-shadow:0 0 0 3px rgba(58,164,91,.4);}
+  .bchip.injured{opacity:.5;}
   .bchip .bn{font-size:11px;font-weight:600;margin-top:3px;text-align:center;line-height:1.05;}
   .bchip .bm{font-size:10px;color:var(--muted);}
   .clockcard{text-align:center;}
-  .clock{font-size:52px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px;line-height:1;}
+  .clock{font-size:50px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px;line-height:1;}
+  .scoreline{font-size:15px;font-weight:700;margin:4px 0 2px;}
   .half-badge{display:inline-block;background:var(--ink);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;}
   .planbox{border:2px solid var(--grass);border-radius:14px;padding:12px;margin-bottom:14px;background:#f3fbf5;}
   .planbox.due{border-color:var(--gold);background:#fffbeb;}
-  .planhead{font-weight:800;font-size:15px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+  .planhead{font-weight:800;font-size:15px;margin-bottom:8px;}
   .pair{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:10px;background:#fff;border:1px solid var(--line);margin-bottom:6px;font-size:15px;}
   .pair .on{font-weight:800;color:var(--grass-d);}
   .pair .arrow{color:var(--muted);font-weight:700;font-size:12px;}
@@ -82,34 +84,47 @@
   .pair .rl{margin-left:auto;font-size:11px;font-weight:700;color:#fff;background:var(--blue);border-radius:8px;padding:2px 7px;}
   .fbar{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);}
   .fbar:last-child{border-bottom:none;}
-  .fbar .lab{width:96px;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .fbar .lab{width:90px;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .track{flex:1;height:16px;background:#eee;border-radius:8px;overflow:hidden;}
   .fill{height:100%;background:var(--grass);border-radius:8px;}
   .fill.low{background:var(--red);} .fill.mid{background:var(--gold);}
-  .fval{width:52px;text-align:right;font-size:13px;font-variant-numeric:tabular-nums;font-weight:600;}
+  .fval{width:50px;text-align:right;font-size:13px;font-variant-numeric:tabular-nums;font-weight:600;}
+  .posbar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin-top:3px;background:#eee;}
+  .posbar i{display:block;height:100%;}
+  .seg2{display:flex;gap:6px;margin-bottom:12px;}
+  .seg2 button{flex:1;background:#fff;border:1px solid var(--line);color:var(--muted);}
+  .seg2 button.sel{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .tl{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
+  .tl .tm{width:54px;font-weight:800;font-variant-numeric:tabular-nums;font-size:14px;color:var(--blue);}
+  .tl .tx{flex:1;font-size:13px;line-height:1.4;}
   .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4;}
   .center{text-align:center;}
   .installbar{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--grass);border-radius:12px;padding:10px 12px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.05);}
   .installbar .grow{font-size:13px;font-weight:600;line-height:1.35;}
   .installbar button{padding:8px 12px;font-size:13px;flex:0 0 auto;}
+  .colorrow{display:flex;gap:8px;margin-top:4px;}
+  .swatch{width:34px;height:34px;border-radius:8px;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;}
+  .swatch.sel{box-shadow:0 0 0 3px var(--ink);}
   dialog{border:none;border-radius:14px;padding:0;max-width:92%;width:360px;}
   dialog::backdrop{background:rgba(0,0,0,.4);}
-  .dlg{padding:16px;}
-  .dlg h3{margin:0 0 4px;font-size:17px;}
+  .dlg{padding:16px;} .dlg h3{margin:0 0 4px;font-size:17px;}
   .raterow{display:flex;align-items:center;gap:6px;margin:8px 0;}
   .raterow .rlab{width:78px;font-size:13px;font-weight:700;}
-  .seg{display:flex;gap:5px;flex:1;}
-  .seg button{flex:1;padding:8px 0;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:9px;}
-  .seg button.sel{background:var(--blue);color:#fff;border-color:var(--blue);}
+  .segr{display:flex;gap:5px;flex:1;}
+  .segr button{flex:1;padding:8px 0;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:9px;}
+  .segr button.sel{background:var(--blue);color:#fff;border-color:var(--blue);}
+  .picklist button{width:100%;text-align:left;background:#fff;border:1px solid var(--line);margin-bottom:6px;}
+  pre.report{white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.5;background:#f7f7fa;border:1px solid var(--line);border-radius:10px;padding:12px;}
 </style>
 </head>
 <body>
 <header>
-  <div>
-    <h1>Team Subs</h1>
-    <div class="sub" id="hdrSub">7-a-side · 2 halves</div>
+  <div class="crest" id="crest">BW</div>
+  <div class="hgrow">
+    <h1 id="teamName">Team Subs</h1>
+    <div class="sub" id="hdrSub">7-a-side</div>
   </div>
-  <button class="btn-ghost" style="padding:7px 11px;font-size:13px" onclick="resetGamePrompt()">Reset game</button>
+  <button class="btn-ghost" style="padding:7px 10px;font-size:12px" onclick="endGame()">End game</button>
 </header>
 <div class="wrap">
   <div id="installBar" class="installbar" style="display:none">
@@ -117,98 +132,138 @@
     <button id="installBtn" class="btn" style="display:none" onclick="doInstall()">Install</button>
     <button class="btn-ghost" onclick="dismissInstall()">✕</button>
   </div>
-  <!-- ============ GAME ============ -->
+  <!-- GAME -->
   <div class="screen active" id="s-game">
     <div class="card clockcard">
-      <div class="half-badge" id="halfBadge">Not started</div>
+      <div class="half-badge" id="periodBadge">Not started</div>
       <div class="clock" id="clockDisp">00:00</div>
-      <div class="small" id="clockSub">Half length 25:00</div>
+      <div class="scoreline" id="scoreLine"></div>
+      <div class="small" id="clockSub"></div>
       <div class="btn-row" style="margin-top:12px">
         <button class="btn-grass" id="startBtn" onclick="toggleClock()">▶ Start</button>
-        <button class="btn-ghost" onclick="nextHalf()">⏭ Next half</button>
+        <button class="btn-ghost" onclick="nextPeriod()" id="nextBtn">⏭ Next</button>
       </div>
     </div>
     <div id="planArea"></div>
     <div class="card">
       <div class="btn-row">
-        <button class="btn" onclick="planNow()">🔄 Plan subs now</button>
-        <button class="btn-ghost" onclick="swapKeeper()">🧤 Swap keeper</button>
+        <button class="btn" onclick="planNow()">🔄 Plan subs</button>
+        <button class="btn-ghost" onclick="swapKeeper()">🧤 Keeper</button>
+      </div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn-ghost" onclick="goal('us')">⚽ Our goal</button>
+        <button class="btn-ghost" onclick="goal('them')">＋ Their goal</button>
       </div>
       <div class="hint" id="rotHint"></div>
     </div>
     <div class="card">
       <h2>On the pitch</h2>
       <div class="pitch" id="pitch"></div>
-      <div class="hint">Green ring = coming ON · red ring = coming OFF. Tap a player then another to swap manually.</div>
+      <div class="hint">Tap a player then another to swap. Tap a pitch player then bench to sub. Long-press a player for goal/injury options.</div>
     </div>
     <div class="card">
-      <h2 style="display:flex;justify-content:space-between;align-items:center">
-        <span>Bench <span class="small" id="benchCount"></span></span>
-      </h2>
+      <h2>Bench <span class="small" id="benchCount"></span></h2>
       <div class="bench" id="bench"></div>
     </div>
   </div>
-  <!-- ============ FAIR PLAY ============ -->
-  <div class="screen" id="s-time">
+  <!-- PLAN -->
+  <div class="screen" id="s-plan">
     <div class="card">
-      <h2>Minutes played today</h2>
-      <div id="fairness"></div>
-      <div class="hint" id="fairHint"></div>
+      <h2>Whole-game plan</h2>
+      <div class="hint" style="margin-top:0">Simulates the rest of the game and lays out every rotation so minutes come out even. A guide — you still tap “Make subs” live.</div>
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn-grass" onclick="buildSchedule()">📋 Build full-game plan</button>
+      </div>
+      <div id="scheduleBox"></div>
     </div>
   </div>
-  <!-- ============ SETUP ============ -->
+  <!-- STATS -->
+  <div class="screen" id="s-stats">
+    <div class="card">
+      <div class="seg2">
+        <button id="tabGame" class="sel" onclick="setStatsTab('game')">This game</button>
+        <button id="tabSeason" onclick="setStatsTab('season')">Season</button>
+      </div>
+      <div id="statsBody"></div>
+      <div class="btn-row" id="seasonBtns" style="margin-top:12px;display:none">
+        <button class="btn-ghost" onclick="resetSeasonStats()">Reset season totals</button>
+      </div>
+    </div>
+  </div>
+  <!-- SETUP -->
   <div class="screen" id="s-setup">
+    <div class="card">
+      <h2>Team</h2>
+      <label class="fld">Active squad</label>
+      <select id="teamSel" onchange="switchTeam()"></select>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn-ghost" onclick="addTeam()">＋ New squad</button>
+        <button class="btn-ghost" onclick="renameTeam()">Rename</button>
+        <button class="btn-ghost" onclick="deleteTeam()">Delete</button>
+      </div>
+      <label class="fld">Accent colour</label>
+      <div class="colorrow" id="colorRow"></div>
+    </div>
     <div class="card">
       <h2>Match settings</h2>
       <label class="fld">Formation (6 outfield + keeper)</label>
       <select id="formationSel" onchange="changeFormation()"></select>
-      <label class="fld">Half length (minutes)</label>
-      <input type="number" id="halfLen" min="1" max="45" step="0.5" value="25" onchange="saveSettings();renderClock()">
+      <label class="fld">Periods</label>
+      <select id="periodsSel" onchange="saveSettings();renderAll()">
+        <option value="2">2 halves</option>
+        <option value="4">4 quarters</option>
+      </select>
+      <label class="fld" id="lenLab">Half length (minutes)</label>
+      <input type="number" id="halfLen" min="1" max="45" step="0.5" value="25" onchange="saveSettings();renderAll()">
       <label class="fld">Rotate subs every (minutes)</label>
       <input type="number" id="rotMin" min="0" max="20" step="0.5" value="6" onchange="saveSettings();renderGame()">
       <label class="fld">How many to sub each rotation</label>
       <select id="subsPer" onchange="saveSettings();renderGame()">
-        <option value="1">1 at a time</option>
-        <option value="2">2 at a time</option>
-        <option value="3">3 at a time</option>
-        <option value="4">4 at a time</option>
+        <option value="1">1 at a time</option><option value="2">2 at a time</option>
+        <option value="3">3 at a time</option><option value="4">4 at a time</option>
         <option value="all">Whole bench (roll everyone)</option>
       </select>
       <div class="prow" style="border:none;padding:8px 0 2px">
-        <div class="grow"><div class="pname" style="font-size:14px">Buzz when it's time to sub</div><div class="small">3 long vibrations each rotation (Android only)</div></div>
-        <div id="vibToggle" class="toggle" onclick="toggleVibrate()"><div class="knob"></div></div>
+        <div class="grow"><div class="pname" style="font-size:14px">Buzz when it's time to sub</div><div class="small">3 long vibrations (Android only)</div></div>
+        <div id="vibToggle" class="toggle" onclick="toggleSetting('vibrate')"><div class="knob"></div></div>
       </div>
-      <button class="btn-ghost" style="width:100%" onclick="buzz(true)">📳 Test buzz</button>
-      <div class="btn-row" style="margin-top:14px">
-        <button class="btn-grass" onclick="autoLineup()">✨ Auto-fill best lineup</button>
+      <div class="prow" style="border:none;padding:4px 0 2px">
+        <div class="grow"><div class="pname" style="font-size:14px">Keep screen awake</div><div class="small">Stops the timer pausing mid-game</div></div>
+        <div id="awakeToggle" class="toggle" onclick="toggleSetting('keepAwake')"><div class="knob"></div></div>
+      </div>
+      <button class="btn-ghost" style="width:100%;margin-top:8px" onclick="buzz(true)">📳 Test buzz</button>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn-grass" onclick="autoLineup()">✨ Auto-fill lineup</button>
         <button class="btn-ghost" onclick="benchAll()">Clear pitch</button>
       </div>
-      <div class="hint">Auto-fill puts players in positions that match their ratings, and gives the spots to whoever has played least so far.</div>
     </div>
     <div class="card">
-      <h2 style="display:flex;justify-content:space-between;align-items:center">
-        <span>Squad — tap a name to set ratings</span>
-        <span class="small" id="availCount"></span>
-      </h2>
-      <div class="hint" style="margin-top:0;margin-bottom:6px">Toggle = available today. Pills show ratings: G goal · D def · M mid · A attack (1–3).</div>
+      <h2>Saved lineups</h2>
+      <div id="lineupList"></div>
+      <button class="btn-ghost" style="width:100%;margin-top:8px" onclick="saveLineup()">💾 Save current lineup</button>
+    </div>
+    <div class="card">
+      <h2>Squad <span class="small" id="availCount"></span></h2>
+      <div class="hint" style="margin-top:0;margin-bottom:6px">Toggle = available today. Pills: G goal · D def · M mid · A attack (1–3).</div>
       <div id="roster"></div>
       <button class="btn-ghost" style="width:100%;margin-top:12px" onclick="addPlayer()">＋ Add player</button>
     </div>
     <div class="card center">
       <button class="btn-ghost" onclick="showInstallBar(true)">📲 Add to home screen</button>
-      <div class="hint">Install this as an app on your phone so it opens full-screen.</div>
+      <div class="hint">Install as an app so it opens full-screen.</div>
     </div>
     <div class="card center">
-      <button class="btn-ghost" onclick="resetSeasonPrompt()">Reset all saved settings</button>
-      <div class="hint">Clears numbers, ratings and today's minutes.</div>
+      <button class="btn-ghost" onclick="resetGamePrompt()">Reset this game</button>
     </div>
   </div>
 </div>
 <div class="tabs">
   <button class="active" data-s="game" onclick="showScreen('game')"><span class="ic">⚽</span>Game</button>
-  <button data-s="time" onclick="showScreen('time')"><span class="ic">⏱️</span>Fair play</button>
+  <button data-s="plan" onclick="showScreen('plan')"><span class="ic">📋</span>Plan</button>
+  <button data-s="stats" onclick="showScreen('stats')"><span class="ic">📊</span>Stats</button>
   <button data-s="setup" onclick="showScreen('setup')"><span class="ic">⚙️</span>Setup</button>
 </div>
+<!-- edit player -->
 <dialog id="editDlg"><div class="dlg">
   <h3 id="edName">Player</h3>
   <div class="small" style="margin-bottom:8px">Rate 1 (fine there) to 3 (best spot).</div>
@@ -221,376 +276,310 @@
   </div>
   <button class="btn-ghost" style="width:100%;margin-top:8px;color:var(--red);border-color:#f3c0c0" onclick="removePlayer()">🗑 Remove from squad</button>
 </div></dialog>
+<!-- player actions (long press) -->
+<dialog id="actDlg"><div class="dlg">
+  <h3 id="actName">Player</h3>
+  <div id="actBody"></div>
+  <button class="btn-ghost" style="width:100%;margin-top:8px" onclick="document.getElementById('actDlg').close()">Cancel</button>
+</div></dialog>
+<!-- generic picker -->
+<dialog id="pickDlg"><div class="dlg">
+  <h3 id="pickTitle">Pick</h3>
+  <div id="pickList" class="picklist"></div>
+  <button class="btn-ghost" style="width:100%;margin-top:4px" onclick="document.getElementById('pickDlg').close()">Cancel</button>
+</div></dialog>
+<!-- report -->
+<dialog id="repDlg"><div class="dlg">
+  <h3>Game report</h3>
+  <pre class="report" id="repText"></pre>
+  <div class="btn-row" style="margin-top:10px">
+    <button class="btn" onclick="shareReport()">Share</button>
+    <button class="btn-ghost" onclick="copyReport()">Copy</button>
+    <button class="btn-ghost" onclick="downloadReport()">Save</button>
+  </div>
+  <button class="btn-grass" style="width:100%;margin-top:8px" onclick="finishToSeason()">✅ Add to season & reset game</button>
+  <button class="btn-ghost" style="width:100%;margin-top:6px" onclick="document.getElementById('repDlg').close()">Close</button>
+</div></dialog>
 <script>
-/* ---------------- data ---------------- */
-const ROSTER = [
-  "Charlotte Lawrance","Kiera Hohneck","Lydia Shan","Mackenzie Clouston",
-  "Madison Gibney","Nieve McLay","Olivia Calkin","Renn Foster",
-  "Rosa Heeney","Te Ahurei Kingi","Zara Muntendam"
-];
-const DEFNUM = {"Nieve McLay":7,"Olivia Calkin":10};
-const FORMATIONS = {
-  "2-3-1":{def:2,mid:3,fwd:1}, "3-2-1":{def:3,mid:2,fwd:1},
-  "2-2-2":{def:2,mid:2,fwd:2}, "3-3":{def:3,mid:3,fwd:0}, "1-3-2":{def:1,mid:3,fwd:2}
-};
+/* ============ data ============ */
+const ROSTER=["Charlotte Lawrance","Kiera Hohneck","Lydia Shan","Mackenzie Clouston","Madison Gibney","Nieve McLay","Olivia Calkin","Renn Foster","Rosa Heeney","Te Ahurei Kingi","Zara Muntendam"];
+const DEFNUM={"Nieve McLay":7,"Olivia Calkin":10};
+const FORMATIONS={"2-3-1":{def:2,mid:3,fwd:1},"3-2-1":{def:3,mid:2,fwd:1},"2-2-2":{def:2,mid:2,fwd:2},"3-3":{def:3,mid:3,fwd:0},"1-3-2":{def:1,mid:3,fwd:2}};
 const LINES=[["GK","Goal"],["DEF","Defence"],["MID","Midfield"],["FWD","Attack"]];
-const LS="subsmgr_v2";
+const COLORS=["#d12f2f","#2f6fd1","#2f8c4d","#7a2fd1","#d1862f","#1c1c1e"];
+const POSCOL={GK:"#f4c430",DEF:"#2f6fd1",MID:"#3aa45b",FWD:"#d12f2f"};
+const LS="subsmgr_v3";
 let state=load();
-let plan=null;        // [{inId,outId,role}]
-let sel=null;         // manual selection
-let editId=null, tmpRate=null;
-function freshPlayers(){
-  return ROSTER.map((n,i)=>({
-    id:i,name:n,num:DEFNUM[n]??"",
-    rate:{GK:1,DEF:2,MID:2,FWD:2},
-    available:true,status:"bench",slot:null,secs:0
-  }));
-}
+let plan=null, schedule=null, sel=null, editId=null, tmpRate=null, actId=null, pickCb=null, statsTab="game", wakeLock=null;
+function newPlayer(id,name,num){return {id:id,name:name,num:(num==null?"":num),rate:{GK:1,DEF:2,MID:2,FWD:2},available:true,status:"bench",slot:null,sec:0,pos:{GK:0,DEF:0,MID:0,FWD:0},season:0,seasonPos:{GK:0,DEF:0,MID:0,FWD:0},injured:false,goals:0,assists:0,saves:0};}
+function newGame(){return {period:1,elapsed:0,running:false,refMs:0,lastSubAt:0,ourScore:0,oppScore:0,opponent:"",events:[]};}
+function newTeam(id,name,players){return {id:id,name:name,color:"#d12f2f",players:players,formation:"2-3-1",halfLen:25,periods:2,rotMin:6,subsPer:"all",vibrate:true,keepAwake:true,savedLineups:[],game:newGame()};}
 function defaultState(){
-  return {players:freshPlayers(),formation:"2-3-1",halfLen:25,rotMin:6,subsPer:"all",vibrate:true,
-    half:1,clock:0,running:false,lastSubAt:0};
+  const ps=ROSTER.map((n,i)=>newPlayer(i,n,DEFNUM[n]));
+  const t=newTeam("t1","Baywide Chickens",ps);
+  return {v:3,teams:{t1:t},current:"t1"};
 }
 function load(){
-  try{
-    const s=JSON.parse(localStorage.getItem(LS));
-    if(s&&Array.isArray(s.players)&&s.players.length){ s.players.forEach(migrate); return s; }
-  }catch(e){}
-  try{
-    const o=JSON.parse(localStorage.getItem("subsmgr_v1"));
-    if(o&&Array.isArray(o.players)&&o.players.length){
-      o.players.forEach(migrate);
-      o.subsPer=o.subsPer||"all"; o.rotMin=o.rotMin||6;
-      return o;
-    }
-  }catch(e){}
+  try{const s=JSON.parse(localStorage.getItem(LS));if(s&&s.teams&&s.current&&s.teams[s.current]){Object.values(s.teams).forEach(fixTeam);return s;}}catch(e){}
+  // migrate v2 single-team
+  try{const o=JSON.parse(localStorage.getItem("subsmgr_v2"));if(o&&Array.isArray(o.players)&&o.players.length){
+    o.players.forEach(migrateP);
+    const t=newTeam("t1","Baywide Chickens",o.players);
+    t.formation=o.formation||"2-3-1";t.halfLen=o.halfLen||25;t.rotMin=o.rotMin||6;t.subsPer=o.subsPer||"all";t.vibrate=o.vibrate!==false;
+    return {v:3,teams:{t1:t},current:"t1"};
+  }}catch(e){}
   return defaultState();
 }
-function migrate(p){
-  if(!p.rate){
-    const m={ANY:{GK:1,DEF:2,MID:2,FWD:2},GK:{GK:3,DEF:1,MID:1,FWD:1},
-      DEF:{GK:1,DEF:3,MID:1,FWD:1},MID:{GK:1,DEF:1,MID:3,FWD:1},FWD:{GK:1,DEF:1,MID:1,FWD:3}};
-    p.rate=m[p.pref]||{GK:1,DEF:2,MID:2,FWD:2};
-    delete p.pref;
-  }
+function migrateP(p){
+  if(!p.rate)p.rate={GK:1,DEF:2,MID:2,FWD:2};
   ["GK","DEF","MID","FWD"].forEach(k=>{if(!p.rate[k]||p.rate[k]<1)p.rate[k]=1;});
+  if(!p.pos)p.pos={GK:0,DEF:0,MID:0,FWD:0};
+  if(p.season==null)p.season=0;
+  if(!p.seasonPos)p.seasonPos={GK:0,DEF:0,MID:0,FWD:0};
+  if(p.sec==null)p.sec=0;
+  if(p.injured==null)p.injured=false;
+  if(p.goals==null)p.goals=0; if(p.assists==null)p.assists=0; if(p.saves==null)p.saves=0;
 }
-function save(){ try{ localStorage.setItem(LS,JSON.stringify(state)); }catch(e){} }
-/* ---------------- helpers ---------------- */
+function fixTeam(t){
+  t.players.forEach(migrateP);
+  if(!t.game)t.game=newGame();
+  if(t.game.events==null)t.game.events=[];
+  if(t.periods==null)t.periods=2;
+  if(!t.color)t.color="#d12f2f";
+  if(!t.savedLineups)t.savedLineups=[];
+  if(t.keepAwake==null)t.keepAwake=true;
+}
+function save(){try{localStorage.setItem(LS,JSON.stringify(state));}catch(e){}}
+/* ============ accessors ============ */
 const $=id=>document.getElementById(id);
-function initials(n){const p=n.trim().split(/\s+/);return (p[0][0]+(p[1]?p[1][0]:"")).toUpperCase();}
+function T(){return state.teams[state.current];}
+function G(){return T().game;}
+function PL(){return T().players;}
+function P(id){return PL().find(p=>p.id===id);}
+function initials(n){const a=n.trim().split(/\s+/);return (a[0][0]+(a[1]?a[1][0]:"")).toUpperCase();}
 function first(n){return n.split(" ")[0];}
-function fmt(s){const m=Math.floor(s/60),x=s%60;return String(m).padStart(2,"0")+":"+String(x).padStart(2,"0");}
-function P(id){return state.players.find(p=>p.id===id);}
-function fieldPlayers(){return state.players.filter(p=>p.status==="field");}
-function benchPlayers(){return state.players.filter(p=>p.status==="bench"&&p.available);}
-function availPlayers(){return state.players.filter(p=>p.available);}
+function fmt(s){s=Math.max(0,Math.round(s));const m=Math.floor(s/60),x=s%60;return String(m).padStart(2,"0")+":"+String(x).padStart(2,"0");}
+function fieldPlayers(){return PL().filter(p=>p.status==="field");}
+function benchPlayers(){return PL().filter(p=>p.status==="bench"&&p.available&&!p.injured);}
+function availPlayers(){return PL().filter(p=>p.available&&!p.injured);}
 function rate(p,r){return (p.rate&&p.rate[r])||0;}
-function slots(){
-  const f=FORMATIONS[state.formation];const arr=[{role:"GK"}];
-  for(let i=0;i<f.def;i++)arr.push({role:"DEF"});
-  for(let i=0;i<f.mid;i++)arr.push({role:"MID"});
-  for(let i=0;i<f.fwd;i++)arr.push({role:"FWD"});
-  return arr;
+function slots(){const f=FORMATIONS[T().formation];const a=[{role:"GK"}];for(let i=0;i<f.def;i++)a.push({role:"DEF"});for(let i=0;i<f.mid;i++)a.push({role:"MID"});for(let i=0;i<f.fwd;i++)a.push({role:"FWD"});return a;}
+function slotRole(i){const s=slots()[i];return s?s.role:"MID";}
+function slotXY(){const f=FORMATIONS[T().formation],out=[[50,90]];[["DEF",f.def,74],["MID",f.mid,50],["FWD",f.fwd,26]].forEach(a=>{const n=a[1],y=a[2];for(let i=0;i<n;i++){const x=n===1?50:18+(64*i/(n-1));out.push([x,y]);}});return out;}
+function rotSec(){return Math.round((T().rotMin||0)*60);}
+function effCount(){const b=benchPlayers().length;return T().subsPer==="all"?b:Math.min(parseInt(T().subsPer),b);}
+function periodLen(){return T().halfLen*60;}
+function gameLen(){return T().halfLen*60*T().periods;}
+/* ============ wall-clock timer ============ */
+function nowMs(){return Date.now();}
+function commit(){const g=G();if(!g.running)return;const now=nowMs();let d=(now-g.refMs)/1000;if(d<0)d=0;g.elapsed+=d;fieldPlayers().forEach(p=>{p.sec+=d;const r=slotRole(p.slot);if(p.pos[r]!=null)p.pos[r]+=d;});g.refMs=now;}
+function liveClock(){const g=G();return g.elapsed+(g.running?(nowMs()-g.refMs)/1000:0);}
+function liveSec(p){const g=G();return p.sec+((g.running&&p.status==="field")?(nowMs()-g.refMs)/1000:0);}
+function totalGameSec(p){return liveSec(p);} // current period accrual already folded into p.sec across periods
+let timer=null;
+function toggleClock(){const g=G();if(g.running){commit();g.running=false;releaseWake();}else{g.running=true;g.refMs=nowMs();requestWake();if(!timer)timer=setInterval(tick,1000);}save();renderClock();renderGame();}
+function tick(){const g=G();if(!g.running)return;
+  if(!plan&&rotSec()>0&&(liveClock()-g.lastSubAt)>=rotSec()&&benchPlayers().length>0&&fieldPlayers().some(p=>slotRole(p.slot)!=="GK")){makePlan();if(plan)buzz();}
+  updateLive();
 }
-function slotRole(i){return slots()[i]?.role||"MID";}
-function slotXY(){
-  const f=FORMATIONS[state.formation],out=[[50,90]];
-  [["DEF",f.def,74],["MID",f.mid,50],["FWD",f.fwd,26]].forEach(([r,n,y])=>{
-    for(let i=0;i<n;i++){const x=n===1?50:18+(64*i/(n-1));out.push([x,y]);}
-  });
-  return out;
+function nextPeriod(){const g=G();commit();if(g.period<T().periods)g.period++;g.elapsed=0;g.lastSubAt=0;g.running=false;g.refMs=nowMs();plan=null;releaseWake();save();renderAll();
+  const kw=T().periods===4?"quarter":"half";
+  if(g.period>=2)setTimeout(()=>alert("New "+kw+" — swap your keeper if planned (🧤 Keeper)."),60);
 }
-function rotSec(){return Math.round((state.rotMin||0)*60);}
-function effCount(){const b=benchPlayers().length;return state.subsPer==="all"?b:Math.min(parseInt(state.subsPer),b);}
-/* ---------------- screens ---------------- */
-function showScreen(s){
-  document.querySelectorAll(".screen").forEach(e=>e.classList.remove("active"));
-  $("s-"+s).classList.add("active");
-  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.s===s));
-  renderAll();
-}
-/* ---------------- manual swap ---------------- */
-function tapPlayer(id){
-  const p=P(id);
-  if(sel===null){sel=id;renderGame();return;}
-  if(sel===id){sel=null;renderGame();return;}
-  const a=P(sel),b=p;
-  if(a.status==="field"&&b.status==="field"){const t=a.slot;a.slot=b.slot;b.slot=t;}
+function requestWake(){if(!T().keepAwake)return;try{if(navigator.wakeLock&&navigator.wakeLock.request){navigator.wakeLock.request("screen").then(w=>{wakeLock=w;}).catch(()=>{});}}catch(e){}}
+function releaseWake(){try{if(wakeLock){wakeLock.release();wakeLock=null;}}catch(e){}}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&G().running){requestWake();updateLive();}});
+/* ============ manual swap / sub ============ */
+function tapPlayer(id){const p=P(id);if(sel===null){sel=id;renderGame();return;}if(sel===id){sel=null;renderGame();return;}const a=P(sel),b=p;
+  if(a.status==="field"&&b.status==="field"){commit();const t=a.slot;a.slot=b.slot;b.slot=t;}
   else if(a.status==="field"&&b.status==="bench"){subIn(b.id,a.id);}
   else if(a.status==="bench"&&b.status==="field"){subIn(a.id,b.id);}
   else {sel=id;renderGame();return;}
-  sel=null;save();renderGame();renderFair();
-}
-function subIn(inId,outId){
-  const ip=P(inId),op=P(outId);
-  ip.status="field";ip.slot=op.slot;op.status="bench";op.slot=null;
-  state.lastSubAt=state.clock;
-}
-/* ---------------- clock ---------------- */
-let timer=null;
-function toggleClock(){
-  state.running=!state.running;
-  if(state.running&&!timer)timer=setInterval(tick,1000);
-  save();renderClock();
-}
-function tick(){
-  if(!state.running)return;
-  state.clock++;
-  fieldPlayers().forEach(p=>p.secs++);
-  if(!plan && rotSec()>0 && (state.clock-state.lastSubAt)>=rotSec() && benchPlayers().length>0 && fieldPlayers().some(p=>slotRole(p.slot)!=="GK")){
-    makePlan();
-    if(plan)buzz();
-  }
-  updateLive();
-  if(state.clock%5===0)save();
-}
-function nextHalf(){
-  state.half=state.half>=2?2:state.half+1;
-  state.clock=0;state.lastSubAt=0;state.running=false;plan=null;
-  save();renderAll();
-  if(state.half===2)setTimeout(()=>alert("Second half — swap your keeper if planned. Tap the Swap keeper button."),50);
-}
-function resetGamePrompt(){
-  if(confirm("Reset the clock and all minutes for today? (Squad, numbers and ratings are kept.)")){
-    state.players.forEach(p=>{p.secs=0;p.status=p.available?"bench":"out";p.slot=null;});
-    state.half=1;state.clock=0;state.running=false;state.lastSubAt=0;sel=null;plan=null;
-    save();renderAll();showScreen("setup");
-  }
-}
-function resetSeasonPrompt(){
-  if(confirm("Reset EVERYTHING to defaults? Clears numbers, ratings and minutes.")){
-    state=defaultState();plan=null;save();renderAll();
-  }
-}
-/* ---------------- lineup ---------------- */
-function autoLineup(){
-  const sl=slots();
-  state.players.forEach(p=>{if(p.status==="field"){p.status="bench";p.slot=null;}});
-  const pool=availPlayers();const used=new Set();
-  sl.forEach((s,i)=>{
-    let best=null,bs=-1e9;
-    pool.forEach(p=>{if(used.has(p.id))return;const sc=rate(p,s.role)*1000-p.secs;if(sc>bs){bs=sc;best=p;}});
-    if(best){best.status="field";best.slot=i;used.add(best.id);}
-  });
-  state.players.forEach(p=>{if(p.available&&!used.has(p.id))p.status="bench";});
-  plan=null;save();renderAll();showScreen("game");
-}
-function benchAll(){
-  state.players.forEach(p=>{if(p.status==="field"){p.status="bench";p.slot=null;}});
-  plan=null;save();renderAll();
-}
-/* ---------------- rotation plan (block subs) ---------------- */
+  sel=null;save();renderGame();renderStats();}
+function subIn(inId,outId){commit();const ip=P(inId),op=P(outId);if(!ip||!op)return;ip.status="field";ip.slot=op.slot;op.status="bench";op.slot=null;G().lastSubAt=G().elapsed;}
+/* ============ lineup ============ */
+function autoLineup(){commit();const sl=slots();PL().forEach(p=>{if(p.status==="field"){p.status="bench";p.slot=null;}});const pool=availPlayers();const used={};
+  sl.forEach((s,i)=>{let best=null,bs=-1e9;pool.forEach(p=>{if(used[p.id])return;const sc=rate(p,s.role)*1000-totalGameSec(p);if(sc>bs){bs=sc;best=p;}});if(best){best.status="field";best.slot=i;used[best.id]=1;}});
+  plan=null;schedule=null;save();renderAll();showScreen('game');}
+function benchAll(){commit();PL().forEach(p=>{if(p.status==="field"){p.status="bench";p.slot=null;}});plan=null;save();renderAll();}
+/* ============ block plan ============ */
 function roleRank(r){return r==="DEF"?0:r==="FWD"?1:2;}
-function makePlan(){
-  let out=fieldPlayers().filter(p=>slotRole(p.slot)!=="GK").sort((a,b)=>b.secs-a.secs);
-  let inb=benchPlayers().slice().sort((a,b)=>a.secs-b.secs);
-  let n=Math.min(effCount(),out.length,inb.length);
-  if(n<=0){plan=null;return;}
-  out=out.slice(0,n);
-  let avail=inb.slice(0,n);
-  let order=out.slice().sort((a,b)=>roleRank(slotRole(a.slot))-roleRank(slotRole(b.slot)));
-  let pairs=[];
-  order.forEach(op=>{
-    const role=slotRole(op.slot);
-    avail.sort((x,y)=>(rate(y,role)-rate(x,role))||(x.secs-y.secs));
-    const ip=avail.shift();
-    if(ip)pairs.push({inId:ip.id,outId:op.id,role});
-  });
-  plan=pairs;
-}
-function buzz(test){
-  if(!test && state.vibrate===false)return;
-  if(navigator.vibrate){try{navigator.vibrate([700,250,700,250,700]);}catch(e){}}
-  else if(test)alert("This phone's browser doesn't support vibration (iPhones don't). The on-screen sub list will still appear.");
-}
-function toggleVibrate(){const cur=state.vibrate!==false;state.vibrate=!cur;save();renderSetup();}
+function makePlan(){let out=fieldPlayers().filter(p=>slotRole(p.slot)!=="GK").sort((a,b)=>liveSec(b)-liveSec(a));let inb=benchPlayers().slice().sort((a,b)=>liveSec(a)-liveSec(b));let n=Math.min(effCount(),out.length,inb.length);if(n<=0){plan=null;return;}out=out.slice(0,n);let avail=inb.slice(0,n);let order=out.slice().sort((a,b)=>roleRank(slotRole(a.slot))-roleRank(slotRole(b.slot)));let pairs=[];order.forEach(op=>{const role=slotRole(op.slot);avail.sort((x,y)=>(rate(y,role)-rate(x,role))||(liveSec(x)-liveSec(y)));const ip=avail.shift();if(ip)pairs.push({inId:ip.id,outId:op.id,role:role});});plan=pairs;}
 function planNow(){makePlan();renderGame();}
 function cancelPlan(){plan=null;renderGame();}
-function applyPlan(){
-  if(!plan)return;
-  plan.forEach(pr=>{const ip=P(pr.inId),op=P(pr.outId);
-    if(ip&&op&&ip.status==="bench"&&op.status==="field")subIn(ip.id,op.id);});
-  state.lastSubAt=state.clock;plan=null;save();renderGame();renderFair();
+function applyPlan(){if(!plan)return;commit();plan.forEach(pr=>{const ip=P(pr.inId),op=P(pr.outId);if(ip&&op&&ip.status==="bench"&&op.status==="field"){ip.status="field";ip.slot=op.slot;op.status="bench";op.slot=null;}});G().lastSubAt=G().elapsed;plan=null;save();renderGame();renderStats();}
+function buzz(test){if(!test&&T().vibrate===false)return;if(navigator.vibrate){try{navigator.vibrate([700,250,700,250,700]);}catch(e){}}else if(test)alert("This phone doesn't support vibration (iPhones don't). The on-screen list still appears.");}
+function swapKeeper(){const gk=fieldPlayers().find(p=>slotRole(p.slot)==="GK");const bench=benchPlayers();if(!gk){alert("No keeper on the pitch.");return;}let inC=bench.slice().sort((a,b)=>(rate(b,"GK")-rate(a,"GK"))||(liveSec(a)-liveSec(b)))[0];if(!inC){alert("No bench player to put in goal.");return;}if(confirm("Put "+inC.name+" in goal for "+gk.name+"?")){subIn(inC.id,gk.id);save();renderGame();renderStats();}}
+/* ============ whole-game plan (simulation) ============ */
+function buildSchedule(){
+  const sl=slots(), gEnd=gameLen();
+  let t=Math.floor(liveClock());
+  // snapshot sim players
+  let sim=availPlayers().map(p=>({id:p.id,name:p.name,num:p.num,rate:p.rate,sec:Math.floor(totalGameSec(p)),slot:p.status==="field"?p.slot:null}));
+  if(sim.filter(s=>s.slot!=null).length<sl.length){ // not enough on field -> autofill sim
+    const used={};sim.forEach(s=>{if(s.slot!=null)used[s.id]=1;});
+    sl.forEach((s,i)=>{if(sim.find(x=>x.slot===i))return;let best=null,bs=-1e9;sim.forEach(p=>{if(used[p.id]||p.slot!=null)return;const sc=(p.rate[s.role]||0)*1000-p.sec;if(sc>bs){bs=sc;best=p;}});if(best){best.slot=i;used[best.id]=1;}});
+  }
+  const rs=rotSec(), pl=periodLen();
+  const onF=()=>sim.filter(s=>s.slot!=null);
+  const benchS=()=>sim.filter(s=>s.slot==null);
+  // build event times: rotations (R) + period/keeper boundaries (K)
+  let times={};
+  if(rs>0){for(let x=Math.ceil((t+1)/rs)*rs;x<gEnd;x+=rs)times[x]=(times[x]||"")+"R";}
+  for(let pn=1;pn<T().periods;pn++){const x=pn*pl;if(x>t&&x<gEnd)times[x]=(times[x]||"")+"K";}
+  let evs=Object.keys(times).map(Number).sort((a,b)=>a-b);
+  let rotations=[],guard=0;
+  for(let ei=0;ei<evs.length&&guard<100000;ei++,guard++){
+    const et=evs[ei];let step=et-t;if(step<0)step=0;onF().forEach(s=>s.sec+=step);t=et;const kind=times[et];
+    if(kind.indexOf("K")>=0){ // keeper swap at period break (matches halftime keeper change)
+      const gk=onF().find(s=>slotRole(s.slot)==="GK");
+      const cand=benchS().slice().sort((a,b)=>((b.rate.GK||0)-(a.rate.GK||0))||(a.sec-b.sec))[0];
+      if(gk&&cand){rotations.push({t:t,pairs:[{inN:first(cand.name),outN:first(gk.name),role:"GK"}]});cand.slot=gk.slot;gk.slot=null;}
+    }
+    if(kind.indexOf("R")>=0){
+      let out=onF().filter(s=>slotRole(s.slot)!=="GK").sort((a,b)=>b.sec-a.sec);
+      let inb=benchS().slice().sort((a,b)=>a.sec-b.sec);
+      let n=Math.min(T().subsPer==="all"?inb.length:Math.min(parseInt(T().subsPer),inb.length),out.length,inb.length);
+      let pairs=[];
+      if(n>0){out=out.slice(0,n);let av=inb.slice(0,n);let order=out.slice().sort((a,b)=>roleRank(slotRole(a.slot))-roleRank(slotRole(b.slot)));order.forEach(op=>{const role=slotRole(op.slot);av.sort((x,y)=>((y.rate[role]||0)-(x.rate[role]||0))||(x.sec-y.sec));const ip=av.shift();if(ip){pairs.push({inN:first(ip.name),outN:first(op.name),role:role});ip.slot=op.slot;op.slot=null;}});}
+      if(pairs.length)rotations.push({t:t,pairs:pairs});
+    }
+  }
+  if(t<gEnd){onF().forEach(s=>s.sec+=(gEnd-t));}
+  schedule={rotations:rotations,final:sim.map(s=>({name:s.name,sec:s.sec})).sort((a,b)=>b.sec-a.sec)};
+  renderSchedule();
 }
-function swapKeeper(){
-  const gk=fieldPlayers().find(p=>slotRole(p.slot)==="GK");
-  const bench=benchPlayers();
-  if(!gk){alert("No keeper on the pitch.");return;}
-  let inC=bench.slice().sort((a,b)=>(rate(b,"GK")-rate(a,"GK"))||(a.secs-b.secs))[0];
-  if(!inC){alert("No bench player to put in goal.");return;}
-  if(confirm("Put "+inC.name+" in goal for "+gk.name+"?")){subIn(inC.id,gk.id);save();renderGame();renderFair();}
-}
-/* ---------------- editing ---------------- */
-function nextId(){return state.players.reduce((m,p)=>Math.max(m,p.id),-1)+1;}
-function addPlayer(){
-  const name=prompt("New player's name:");
-  if(!name||!name.trim())return;
-  const p={id:nextId(),name:name.trim(),num:"",rate:{GK:1,DEF:2,MID:2,FWD:2},available:true,status:"bench",slot:null,secs:0};
-  state.players.push(p);plan=null;save();renderAll();openEdit(p.id);
-}
-function removePlayer(){
-  if(editId===null)return;const p=P(editId);if(!p)return;
-  if(!confirm("Remove "+p.name+" from the squad? This deletes their info and minutes."))return;
-  state.players=state.players.filter(x=>x.id!==editId);
-  editId=null;plan=null;document.getElementById("editDlg").close();save();renderAll();
-}
-function openEdit(id){
-  editId=id;const p=P(id);tmpRate={...p.rate};
-  $("edName").textContent=p.name;$("edNum").value=p.num;
-  renderRateRows();$("editDlg").showModal();
-}
-function renderRateRows(){
-  const c=$("rateRows");c.innerHTML="";
-  LINES.forEach(([k,lab])=>{
-    const row=document.createElement("div");row.className="raterow";
-    let segs="";for(let v=1;v<=3;v++){segs+='<button class="'+(tmpRate[k]===v?"sel":"")+'" onclick="setRate(\''+k+'\','+v+')">'+v+'</button>';}
-    row.innerHTML='<div class="rlab">'+lab+'</div><div class="seg">'+segs+'</div>';
-    c.appendChild(row);
-  });
-}
+/* ============ events / score ============ */
+function goal(side){const g=G();if(side==="them"){g.oppScore++;g.events.push({t:Math.floor(liveClock()),type:"goalThem"});save();renderGame();return;}
+  openPicker("Who scored?",function(pid){const p=P(pid);if(p){p.goals++;g.ourScore++;g.events.push({t:Math.floor(liveClock()),type:"goal",id:pid});save();
+    openPicker("Assist? (optional)",function(aid){if(aid!=null){const a=P(aid);if(a){a.assists++;g.events.push({t:Math.floor(liveClock()),type:"assist",id:aid});save();}}renderGame();},true);
+    renderGame();}},false);}
+function recordSave(pid){const p=P(pid);if(p){p.saves++;G().events.push({t:Math.floor(liveClock()),type:"save",id:pid});save();}}
+/* ============ injury / availability mid-game ============ */
+function playerAction(id){actId=id;const p=P(id);$("actName").textContent=p.name;const b=$("actBody");let h="";
+  h+='<button class="btn-ghost" style="width:100%;margin-bottom:6px" onclick="actGoal()">⚽ Record goal</button>';
+  if(slotRole(p.slot)==="GK"||rate(p,"GK")>=2)h+='<button class="btn-ghost" style="width:100%;margin-bottom:6px" onclick="actSave()">🧤 Record save</button>';
+  if(!p.injured)h+='<button class="btn-ghost" style="width:100%;margin-bottom:6px;color:var(--red)" onclick="actInjure()">🚑 Mark injured / out for game</button>';
+  else h+='<button class="btn-ghost" style="width:100%;margin-bottom:6px;color:var(--grass-d)" onclick="actReturn()">↩ Available again</button>';
+  b.innerHTML=h;$("actDlg").showModal();}
+function actGoal(){$("actDlg").close();const g=G();const p=P(actId);if(p){p.goals++;g.ourScore++;g.events.push({t:Math.floor(liveClock()),type:"goal",id:actId});save();renderGame();}}
+function actSave(){$("actDlg").close();recordSave(actId);renderGame();}
+function actInjure(){const p=P(actId);commit();p.injured=true;if(p.status==="field"){p.status="bench";p.slot=null;}$("actDlg").close();plan=null;save();renderAll();}
+function actReturn(){const p=P(actId);p.injured=false;$("actDlg").close();save();renderAll();}
+/* ============ saved lineups ============ */
+function saveLineup(){const f=fieldPlayers();if(f.length===0){alert("Put players on the pitch first.");return;}const name=prompt("Name this lineup:","Lineup "+(T().savedLineups.length+1));if(!name)return;T().savedLineups.push({name:name,formation:T().formation,list:f.map(p=>({id:p.id,slot:p.slot}))});save();renderSetup();}
+function applyLineup(i){const lu=T().savedLineups[i];if(!lu)return;commit();T().formation=lu.formation;PL().forEach(p=>{if(p.status==="field"){p.status="bench";p.slot=null;}});lu.list.forEach(e=>{const p=P(e.id);if(p&&p.available&&!p.injured){p.status="field";p.slot=e.slot;}});plan=null;schedule=null;save();renderAll();showScreen('game');}
+function deleteLineup(i){if(confirm("Delete this saved lineup?")){T().savedLineups.splice(i,1);save();renderSetup();}}
+/* ============ season ============ */
+function finishToSeason(){commit();PL().forEach(p=>{p.season+=p.sec;["GK","DEF","MID","FWD"].forEach(k=>p.seasonPos[k]+=(p.pos[k]||0));});resetGame(true);$("repDlg").close();showScreen('stats');statsTab="season";renderStats();}
+function resetSeasonStats(){if(confirm("Reset season totals to zero for this squad?")){PL().forEach(p=>{p.season=0;p.seasonPos={GK:0,DEF:0,MID:0,FWD:0};});save();renderStats();}}
+/* ============ report ============ */
+function buildReportText(){const t=T(),g=G();let L=[];L.push(t.name+(g.opponent?(" vs "+g.opponent):""));L.push("Final: "+g.ourScore+" - "+g.oppScore);L.push("");
+  const target=availPlayers().length?(slots().length*gameLen())/availPlayers().length:0;
+  L.push("Minutes (fair target ~"+fmt(target)+"):");
+  availPlayers().slice().sort((a,b)=>totalGameSec(b)-totalGameSec(a)).forEach(p=>{const mins=fmt(totalGameSec(p));const pos=["GK","DEF","MID","FWD"].filter(k=>p.pos[k]>30).map(k=>k+" "+fmt(p.pos[k])).join(", ");L.push("  "+p.name+": "+mins+(pos?("  ["+pos+"]"):""));});
+  const scorers=PL().filter(p=>p.goals>0);if(scorers.length){L.push("");L.push("Goals: "+scorers.map(p=>first(p.name)+(p.goals>1?(" x"+p.goals):"")).join(", "));}
+  const ass=PL().filter(p=>p.assists>0);if(ass.length)L.push("Assists: "+ass.map(p=>first(p.name)+(p.assists>1?(" x"+p.assists):"")).join(", "));
+  const sv=PL().filter(p=>p.saves>0);if(sv.length)L.push("Saves: "+sv.map(p=>first(p.name)+" "+p.saves).join(", "));
+  return L.join("\n");}
+function endGame(){const opp=prompt("Opponent name (optional, for the report):",G().opponent||"");if(opp!==null)G().opponent=opp;commit();save();$("repText").textContent=buildReportText();$("repDlg").showModal();}
+function copyReport(){const t=$("repText").textContent;if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>alert("Copied!"),()=>{});}
+function shareReport(){const t=$("repText").textContent;if(navigator.share)navigator.share({title:"Game report",text:t}).catch(()=>{});else copyReport();}
+function downloadReport(){const t=$("repText").textContent;const b=new Blob([t],{type:"text/plain"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=(T().name.replace(/\s+/g,"-")||"game")+"-report.txt";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
+/* ============ editing players ============ */
+function nextId(){return PL().reduce((m,p)=>Math.max(m,p.id),-1)+1;}
+function addPlayer(){const name=prompt("New player's name:");if(!name||!name.trim())return;const p=newPlayer(nextId(),name.trim(),"");PL().push(p);plan=null;save();renderAll();openEdit(p.id);}
+function removePlayer(){if(editId===null)return;const p=P(editId);if(!p)return;if(!confirm("Remove "+p.name+" from the squad?"))return;T().players=PL().filter(x=>x.id!==editId);editId=null;plan=null;$("editDlg").close();save();renderAll();}
+function openEdit(id){editId=id;const p=P(id);tmpRate=Object.assign({},p.rate);$("edName").textContent=p.name;$("edNum").value=p.num;renderRateRows();$("editDlg").showModal();}
+function renderRateRows(){const c=$("rateRows");c.innerHTML="";LINES.forEach(L=>{const k=L[0],lab=L[1];const row=document.createElement("div");row.className="raterow";let segs="";for(let v=1;v<=3;v++)segs+='<button class="'+(tmpRate[k]===v?'sel':'')+'" onclick="setRate(\''+k+'\','+v+')">'+v+'</button>';row.innerHTML='<div class="rlab">'+lab+'</div><div class="segr">'+segs+'</div>';c.appendChild(row);});}
 function setRate(k,v){tmpRate[k]=v;renderRateRows();}
-function saveEdit(){
-  const p=P(editId);p.rate={...tmpRate};
-  p.num=$("edNum").value===""?"":parseInt($("edNum").value);
-  $("editDlg").close();save();renderAll();
-}
-function toggleAvail(id){
-  const p=P(id);p.available=!p.available;
-  if(!p.available){p.status="out";p.slot=null;}else if(p.status==="out")p.status="bench";
-  plan=null;save();renderAll();
-}
-/* ---------------- settings ---------------- */
-function changeFormation(){
-  state.formation=$("formationSel").value;
-  const n=slots().length;
-  state.players.forEach(p=>{if(p.status==="field"&&p.slot>=n){p.status="bench";p.slot=null;}});
-  plan=null;save();renderAll();
-}
-function saveSettings(){
-  state.halfLen=Math.max(1,parseFloat($("halfLen").value)||25);
-  state.rotMin=Math.max(0,parseFloat($("rotMin").value)||0);
-  state.subsPer=$("subsPer").value;
-  save();
-}
-/* ---------------- render ---------------- */
-function renderAll(){renderClock();renderGame();renderFair();renderSetup();}
-function renderClock(){
-  $("halfBadge").textContent=state.running?("Half "+state.half+" · running"):(state.clock>0?("Half "+state.half+" · paused"):"Not started");
-  $("clockDisp").textContent=fmt(state.clock);
-  const over=state.clock>=state.halfLen*60;
-  $("clockDisp").style.color=over?"var(--red)":"";
-  $("clockSub").textContent="Half length "+fmt(Math.round(state.halfLen*60))+(over?" · TIME UP":"");
-  $("startBtn").textContent=state.running?"⏸ Pause":"▶ Start";
-  $("startBtn").className=state.running?"btn":"btn-grass";
-  $("hdrSub").textContent="7-a-side · "+state.formation+" · 2 halves";
-}
+function saveEdit(){const p=P(editId);p.rate=Object.assign({},tmpRate);p.num=$("edNum").value===""?"":parseInt($("edNum").value);$("editDlg").close();save();renderAll();}
+function toggleAvail(id){const p=P(id);commit();p.available=!p.available;if(!p.available){p.status="out";p.slot=null;}else if(p.status==="out")p.status="bench";plan=null;save();renderAll();}
+/* ============ teams / branding ============ */
+function applyTheme(){document.documentElement.style.setProperty("--red",T().color);const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",T().color);$("crest").textContent=initials(T().name);$("teamName").textContent=T().name;}
+function switchTeam(){commit();state.current=$("teamSel").value;plan=null;schedule=null;save();renderAll();}
+function addTeam(){const name=prompt("New squad name:");if(!name||!name.trim())return;const id="t"+Date.now();state.teams[id]=newTeam(id,name.trim(),[]);state.current=id;save();renderAll();showScreen('setup');}
+function renameTeam(){const name=prompt("Squad name:",T().name);if(name&&name.trim()){T().name=name.trim();save();renderAll();}}
+function deleteTeam(){if(Object.keys(state.teams).length<=1){alert("You need at least one squad.");return;}if(!confirm("Delete squad \""+T().name+"\" and all its data?"))return;delete state.teams[state.current];state.current=Object.keys(state.teams)[0];plan=null;save();renderAll();}
+function setColor(c){T().color=c;save();applyTheme();renderSetup();}
+/* ============ settings ============ */
+function changeFormation(){commit();T().formation=$("formationSel").value;const n=slots().length;PL().forEach(p=>{if(p.status==="field"&&p.slot>=n){p.status="bench";p.slot=null;}});plan=null;schedule=null;save();renderAll();}
+function saveSettings(){T().halfLen=Math.max(1,parseFloat($("halfLen").value)||25);T().rotMin=Math.max(0,parseFloat($("rotMin").value)||0);T().subsPer=$("subsPer").value;T().periods=parseInt($("periodsSel").value)||2;save();}
+function toggleSetting(k){T()[k]=T()[k]===false?true:false;if(k==="keepAwake"){if(T().keepAwake&&G().running)requestWake();else releaseWake();}save();renderSetup();}
+/* ============ generic picker ============ */
+function openPicker(title,cb,allowNone){pickCb=cb;$("pickTitle").textContent=title;const l=$("pickList");l.innerHTML="";
+  PL().filter(p=>p.available&&!p.injured).sort((a,b)=>(a.status==="field"?0:1)-(b.status==="field"?0:1)).forEach(p=>{const b=document.createElement("button");b.textContent=(p.num!==""?("#"+p.num+" "):"")+p.name+(p.status==="field"?" (on)":"");b.onclick=function(){$("pickDlg").close();pickCb(p.id);};l.appendChild(b);});
+  if(allowNone){const b=document.createElement("button");b.textContent="— none —";b.onclick=function(){$("pickDlg").close();pickCb(null);};l.appendChild(b);}
+  $("pickDlg").showModal();}
+/* ============ reset ============ */
+function resetGame(silent){const g=G();PL().forEach(p=>{p.sec=0;p.pos={GK:0,DEF:0,MID:0,FWD:0};p.status=(p.available&&!p.injured)?"bench":(p.injured?"bench":"out");p.slot=null;p.goals=0;p.assists=0;p.saves=0;});T().game=newGame();plan=null;schedule=null;sel=null;releaseWake();save();if(!silent){renderAll();showScreen('setup');}}
+function resetGamePrompt(){if(confirm("Reset this game's clock, minutes, score and events? (Ratings & season kept.)"))resetGame();}
+/* ============ render ============ */
+function renderAll(){applyTheme();renderClock();renderGame();renderPlanScreen();renderStats();renderSetup();}
+function renderClock(){const g=G();const kw=T().periods===4?"Q":"H";
+  $("periodBadge").textContent=g.running?(kw+g.period+" · running"):(g.elapsed>0||g.period>1?(kw+g.period+" · paused"):"Not started");
+  $("clockDisp").textContent=fmt(liveClock());
+  const over=liveClock()>=periodLen();$("clockDisp").style.color=over?"var(--red)":"";
+  $("clockSub").textContent=(T().periods===4?"Quarter":"Half")+" "+fmt(periodLen())+(over?" · TIME UP":"");
+  $("scoreLine").textContent=T().name.split(" ")[0]+" "+g.ourScore+" – "+g.oppScore+" "+(g.opponent||"Them");
+  $("startBtn").textContent=g.running?"⏸ Pause":"▶ Start";$("startBtn").className=g.running?"btn":"btn-grass";
+  $("nextBtn").textContent=g.period<T().periods?("⏭ "+(T().periods===4?"Next quarter":"Second half")):"Full time";
+  $("hdrSub").textContent="7-a-side · "+T().formation+" · "+T().periods+(T().periods===4?" quarters":" halves");}
 function inIds(){return plan?plan.map(p=>p.inId):[];}
 function outIds(){return plan?plan.map(p=>p.outId):[];}
-function renderPlan(){
-  const area=$("planArea");area.innerHTML="";
-  if(!plan||plan.length===0)return;
-  const due=rotSec()>0&&(state.clock-state.lastSubAt)>=rotSec();
-  const box=document.createElement("div");
-  box.className="planbox"+(due?" due":"");
-  let rows="";
-  plan.forEach(pr=>{const ip=P(pr.inId),op=P(pr.outId);if(!ip||!op)return;
-    rows+='<div class="pair"><span class="on">'+first(ip.name)+(ip.num!==""?" #"+ip.num:"")+'</span>'
-      +'<span class="arrow">ON ▶ for</span><span class="off">'+first(op.name)+'</span>'
-      +'<span class="rl">'+pr.role+'</span></div>';});
-  box.innerHTML='<div class="planhead"><span>'+(due?"⏰ Time to rotate":"Substitutions ready")+' — '+plan.length+' '+(plan.length>1?"subs":"sub")+'</span></div>'
-    +rows
-    +'<div class="btn-row" style="margin-top:8px">'
-    +'<button class="btn-grass" onclick="applyPlan()">✅ Make all subs</button>'
-    +'<button class="btn-ghost" onclick="planNow()">↻ Re-plan</button>'
-    +'<button class="btn-ghost" onclick="cancelPlan()">✕</button></div>'
-    +'<div class="hint">Tell each player who they are replacing — they go on when you call their name.</div>';
-  area.appendChild(box);
-}
-function renderGame(){
-  const pit=$("pitch");
-  pit.innerHTML='<div class="line"></div><div class="circle"></div><div class="box top"></div><div class="box bot"></div>';
-  const xy=slotXY(),sl=slots(),outs=outIds();
-  sl.forEach((s,i)=>{
-    const xyc=xy[i];const x=xyc[0],y=xyc[1];const pl=fieldPlayers().find(p=>p.slot===i);
-    const d=document.createElement("div");d.className="slot";d.style.left=x+"%";d.style.top=y+"%";
-    const isGK=s.role==="GK";
-    if(pl){
-      const off=outs.includes(pl.id);
-      d.innerHTML='<div class="role">'+(isGK?"GK":s.role)+'</div>'
-        +'<div class="chip '+(isGK?"gk":"")+' '+(sel===pl.id?"sel":"")+' '+(off?"off":"")+'">'+(pl.num!==""?pl.num:initials(pl.name))+'</div>'
-        +'<div class="nm">'+first(pl.name)+'</div><div class="mins">'+fmt(pl.secs)+'</div>';
-      d.onclick=(function(id){return function(){tapPlayer(id);};})(pl.id);
-    }else{
-      d.innerHTML='<div class="role">'+(isGK?"GK":s.role)+'</div>'
-        +'<div class="chip" style="border-style:dashed;border-color:#fff;background:rgba(255,255,255,.25);color:#fff">+</div>'
-        +'<div class="nm">empty</div>';
-      d.onclick=(function(idx){return function(){if(sel!==null&&P(sel).status==="bench"){const b=P(sel);b.status="field";b.slot=idx;sel=null;save();renderGame();renderFair();}};})(i);
-    }
-    pit.appendChild(d);
-  });
-  const b=$("bench");b.innerHTML="";
-  const ins=inIds();
-  const bp=benchPlayers().sort((a,b)=>a.secs-b.secs);
-  $("benchCount").textContent="("+bp.length+")";
+function renderPlan(){const area=$("planArea");area.innerHTML="";if(!plan||plan.length===0)return;const due=rotSec()>0&&(liveClock()-G().lastSubAt)>=rotSec();const box=document.createElement("div");box.className="planbox"+(due?" due":"");let rows="";plan.forEach(pr=>{const ip=P(pr.inId),op=P(pr.outId);if(!ip||!op)return;rows+='<div class="pair"><span class="on">'+first(ip.name)+(ip.num!==""?" #"+ip.num:"")+'</span><span class="arrow">ON ▶ for</span><span class="off">'+first(op.name)+'</span><span class="rl">'+pr.role+'</span></div>';});box.innerHTML='<div class="planhead">'+(due?"⏰ Time to rotate":"Substitutions ready")+' — '+plan.length+' '+(plan.length>1?"subs":"sub")+'</div>'+rows+'<div class="btn-row" style="margin-top:8px"><button class="btn-grass" onclick="applyPlan()">✅ Make all subs</button><button class="btn-ghost" onclick="planNow()">↻ Re-plan</button><button class="btn-ghost" onclick="cancelPlan()">✕</button></div><div class="hint">Tell each player who they are replacing — they go on when you call their name.</div>';area.appendChild(box);}
+let pressTimer=null;
+function bindPress(el,id){el.onclick=function(){tapPlayer(id);};el.oncontextmenu=function(e){e.preventDefault();playerAction(id);};
+  el.ontouchstart=function(){pressTimer=setTimeout(function(){pressTimer=null;playerAction(id);},550);};
+  el.ontouchend=function(){if(pressTimer){clearTimeout(pressTimer);pressTimer=null;}};
+  el.onmousedown=function(){pressTimer=setTimeout(function(){pressTimer=null;playerAction(id);},550);};
+  el.onmouseup=function(){if(pressTimer){clearTimeout(pressTimer);pressTimer=null;}};}
+function renderGame(){const pit=$("pitch");pit.innerHTML='<div class="line"></div><div class="circle"></div><div class="box top"></div><div class="box bot"></div>';const xy=slotXY(),sl=slots(),outs=outIds();
+  sl.forEach((s,i)=>{const x=xy[i][0],y=xy[i][1];const pl=fieldPlayers().find(p=>p.slot===i);const d=document.createElement("div");d.className="slot";d.style.left=x+"%";d.style.top=y+"%";const isGK=s.role==="GK";
+    if(pl){const off=outs.indexOf(pl.id)>=0;d.innerHTML='<div class="role">'+(isGK?"GK":s.role)+'</div><div class="chip '+(isGK?'gk':'')+' '+(sel===pl.id?'sel':'')+' '+(off?'off':'')+'">'+(pl.num!==""?pl.num:initials(pl.name))+'</div><div class="nm">'+first(pl.name)+'</div><div class="mins">'+fmt(liveSec(pl))+'</div>';bindPress(d,pl.id);}
+    else{d.innerHTML='<div class="role">'+(isGK?"GK":s.role)+'</div><div class="chip" style="border-style:dashed;border-color:#fff;background:rgba(255,255,255,.25);color:#fff">+</div><div class="nm">empty</div>';d.onclick=(function(idx){return function(){if(sel!==null&&P(sel).status==="bench"){commit();const b=P(sel);b.status="field";b.slot=idx;sel=null;save();renderGame();renderStats();}};})(i);}
+    pit.appendChild(d);});
+  const b=$("bench");b.innerHTML="";const ins=inIds();const bp=PL().filter(p=>p.status==="bench"&&p.available).sort((a,b)=>liveSec(a)-liveSec(b));$("benchCount").textContent="("+benchPlayers().length+")";
   if(bp.length===0)b.innerHTML='<div class="small">No bench players available.</div>';
-  bp.forEach(p=>{
-    const c=document.createElement("div");
-    c.className="bchip"+(sel===p.id?" sel":"")+(ins.includes(p.id)?" on":"");
-    c.innerHTML='<div class="av">'+(p.num!==""?p.num:initials(p.name))+'</div>'
-      +'<div class="bn">'+first(p.name)+'</div><div class="bm">'+fmt(p.secs)+'</div>';
-    c.onclick=(function(id){return function(){tapPlayer(id);};})(p.id);
-    b.appendChild(c);
-  });
-  const everyTxt=state.subsPer==="all"?"the whole bench":(state.subsPer+" at a time");
-  $("rotHint").textContent=state.rotMin>0?("Auto-prompts to roll "+everyTxt+" every "+state.rotMin+" min. Or plan a rotation now."):"Rotation prompts off. Plan subs manually.";
-  renderPlan();
-}
-function renderFair(){
-  const f=$("fairness");f.innerHTML="";
-  const ps=availPlayers().slice().sort((a,b)=>a.secs-b.secs);
-  const max=Math.max(60,...ps.map(p=>p.secs));
-  const avg=ps.length?ps.reduce((s,p)=>s+p.secs,0)/ps.length:0;
-  ps.forEach(p=>{
-    const pct=Math.round(p.secs/max*100);
-    const cls=p.secs<avg*0.7?"low":(p.secs<avg*0.95?"mid":"");
-    const onF=p.status==="field";
-    const row=document.createElement("div");row.className="fbar";
-    row.innerHTML='<div class="lab">'+(onF?"🟢 ":"")+first(p.name)+'</div>'
-      +'<div class="track"><div class="fill '+cls+'" style="width:'+pct+'%"></div></div>'
-      +'<div class="fval">'+fmt(p.secs)+'</div>';
-    f.appendChild(row);
-  });
-  $("fairHint").textContent=ps.length?("Average so far "+fmt(Math.round(avg))+". Red = below average (get them on), 🟢 = on now."):"Mark players available in Setup.";
-}
+  bp.forEach(p=>{const c=document.createElement("div");c.className="bchip"+(sel===p.id?" sel":"")+(ins.indexOf(p.id)>=0?" on":"")+(p.injured?" injured":"");c.innerHTML='<div class="av">'+(p.num!==""?p.num:initials(p.name))+'</div><div class="bn">'+first(p.name)+(p.injured?" 🚑":"")+'</div><div class="bm">'+fmt(liveSec(p))+'</div>';bindPress(c,p.id);b.appendChild(c);});
+  const everyTxt=T().subsPer==="all"?"the whole bench":(T().subsPer+" at a time");
+  $("rotHint").textContent=T().rotMin>0?("Buzzes & lists "+everyTxt+" every "+T().rotMin+" min."):"Rotation prompts off.";
+  renderPlan();}
+function updateLive(){renderClock();renderGame();if($("s-stats").classList.contains("active"))renderStats();}
+function renderPlanScreen(){if(!schedule)return;renderSchedule();}
+function renderSchedule(){const box=$("scheduleBox");if(!schedule){box.innerHTML="";return;}let h="";if(schedule.rotations.length===0)h+='<div class="hint">No rotations scheduled (check bench size / rotation interval).</div>';
+  schedule.rotations.forEach(r=>{let txt=r.pairs.map(pr=>pr.inN+" ▶ "+pr.outN+" ("+pr.role+")").join("<br>");h+='<div class="tl"><div class="tm">'+fmt(r.t)+'</div><div class="tx">'+txt+'</div></div>';});
+  h+='<h2 style="margin-top:14px">Projected minutes at full time</h2>';schedule.final.forEach(s=>{h+='<div class="fbar"><div class="lab">'+first(s.name)+'</div><div class="fval">'+fmt(s.sec)+'</div></div>';});
+  const fsec=schedule.final.map(s=>s.sec);const sp=Math.round((Math.max.apply(null,fsec)-Math.min.apply(null,fsec))/60);
+  h+='<div class="hint">Top-to-bottom spread ~'+sp+' min.'+((sp>8&&T().periods===2)?' Tip: a full-half keeper stint is the main cause — switch to 4 quarters or fewer subs per rotation for tighter even time.':'')+'</div>';
+  box.innerHTML=h;}
+function setStatsTab(t){statsTab=t;$("tabGame").className=t==="game"?"sel":"";$("tabSeason").className=t==="season"?"sel":"";$("seasonBtns").style.display=t==="season"?"flex":"none";renderStats();}
+function renderStats(){const body=$("statsBody");if(!body)return;const season=statsTab==="season";
+  const ps=availPlayers().slice();
+  const val=p=>season?(p.season+ (statsTab==="season"?0:0)):totalGameSec(p);
+  ps.sort((a,b)=>val(a)-val(b));
+  const max=Math.max(60,...ps.map(val));const avg=ps.length?ps.reduce((s,p)=>s+val(p),0)/ps.length:0;
+  let h="";if(ps.length===0)h='<div class="small">No available players.</div>';
+  ps.forEach(p=>{const v=val(p);const pct=Math.round(v/max*100);const cls=v<avg*0.7?"low":(v<avg*0.95?"mid":"");const onF=p.status==="field";
+    const pos=season?p.seasonPos:p.pos;const tot=(pos.GK+pos.DEF+pos.MID+pos.FWD)||1;
+    let posbar="";["GK","DEF","MID","FWD"].forEach(k=>{const w=Math.round((pos[k]/tot)*100);if(w>0)posbar+='<i style="width:'+w+'%;background:'+POSCOL[k]+'"></i>';});
+    h+='<div style="padding:7px 0;border-bottom:1px solid var(--line)"><div class="fbar" style="border:none;padding:0"><div class="lab">'+(onF?"🟢 ":"")+first(p.name)+'</div><div class="track"><div class="fill '+cls+'" style="width:'+pct+'%"></div></div><div class="fval">'+fmt(v)+'</div></div><div class="posbar">'+posbar+'</div></div>';});
+  h+='<div class="hint">Bar colours = position split: <span style="color:'+POSCOL.GK+'">●</span>GK <span style="color:'+POSCOL.DEF+'">●</span>Def <span style="color:'+POSCOL.MID+'">●</span>Mid <span style="color:'+POSCOL.FWD+'">●</span>Att. '+(season?"Season totals (this game added when you finish it).":"Avg "+fmt(avg)+". Red = below average.")+'</div>';
+  body.innerHTML=h;}
 function renderSetup(){
-  const fs=$("formationSel");
-  if(fs.options.length===0)Object.keys(FORMATIONS).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k+"  ("+FORMATIONS[k].def+" def, "+FORMATIONS[k].mid+" mid, "+FORMATIONS[k].fwd+" fwd)";fs.appendChild(o);});
-  fs.value=state.formation;
-  $("halfLen").value=state.halfLen;$("rotMin").value=state.rotMin;$("subsPer").value=state.subsPer;
-  const vt=$("vibToggle");if(vt)vt.className="toggle"+((state.vibrate!==false)?" on":"");
-  const r=$("roster");r.innerHTML="";
-  state.players.forEach(p=>{
-    const row=document.createElement("div");row.className="prow";
-    const pills="G"+rate(p,"GK")+" D"+rate(p,"DEF")+" M"+rate(p,"MID")+" A"+rate(p,"FWD");
-    row.innerHTML='<div class="avatar">'+(p.num!==""?p.num:initials(p.name))+'</div>'
-      +'<div class="grow" onclick="openEdit('+p.id+')">'
-      +'<div class="pname">'+p.name+'</div>'
-      +'<div class="pmeta"><span class="rate-pill">'+pills+'</span> '+(p.num!==""?("#"+p.num):"no #")+' · tap to edit</div></div>';
-    const t=document.createElement("div");t.className="toggle"+(p.available?" on":"");
-    t.innerHTML='<div class="knob"></div>';t.onclick=(function(id){return function(){toggleAvail(id);};})(p.id);
-    row.appendChild(t);r.appendChild(row);
-  });
-  $("availCount").textContent=availPlayers().length+" available";
-}
-function updateLive(){
-  $("clockDisp").textContent=fmt(state.clock);
-  const over=state.clock>=state.halfLen*60;
-  $("clockDisp").style.color=over?"var(--red)":"";
-  $("clockSub").textContent="Half length "+fmt(Math.round(state.halfLen*60))+(over?" · TIME UP":"");
-  $("halfBadge").textContent="Half "+state.half+" · running";
-  renderGame();renderFair();
-}
-/* ---------------- install / PWA ---------------- */
+  const ts=$("teamSel");ts.innerHTML="";Object.values(state.teams).forEach(t=>{const o=document.createElement("option");o.value=t.id;o.textContent=t.name;ts.appendChild(o);});ts.value=state.current;
+  const cr=$("colorRow");cr.innerHTML="";COLORS.forEach(c=>{const d=document.createElement("div");d.className="swatch"+(T().color===c?" sel":"");d.style.background=c;d.onclick=(function(col){return function(){setColor(col);};})(c);cr.appendChild(d);});
+  const fs=$("formationSel");if(fs.options.length===0)Object.keys(FORMATIONS).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k+"  ("+FORMATIONS[k].def+" def, "+FORMATIONS[k].mid+" mid, "+FORMATIONS[k].fwd+" fwd)";fs.appendChild(o);});
+  fs.value=T().formation;$("periodsSel").value=T().periods;$("lenLab").textContent=(T().periods===4?"Quarter":"Half")+" length (minutes)";
+  $("halfLen").value=T().halfLen;$("rotMin").value=T().rotMin;$("subsPer").value=T().subsPer;
+  $("vibToggle").className="toggle"+((T().vibrate!==false)?" on":"");
+  $("awakeToggle").className="toggle"+((T().keepAwake!==false)?" on":"");
+  const lu=$("lineupList");lu.innerHTML="";if(T().savedLineups.length===0)lu.innerHTML='<div class="small">None saved yet.</div>';
+  T().savedLineups.forEach((l,i)=>{const row=document.createElement("div");row.className="prow";row.innerHTML='<div class="grow"><div class="pname" style="font-size:14px">'+l.name+'</div><div class="small">'+l.formation+' · '+l.list.length+' players</div></div>';const a=document.createElement("button");a.className="btn-ghost";a.style.cssText="padding:7px 10px;font-size:13px";a.textContent="Use";a.onclick=(function(ix){return function(){applyLineup(ix);};})(i);const d=document.createElement("button");d.className="btn-ghost";d.style.cssText="padding:7px 10px;font-size:13px;color:var(--red)";d.textContent="✕";d.onclick=(function(ix){return function(){deleteLineup(ix);};})(i);row.appendChild(a);row.appendChild(d);lu.appendChild(row);});
+  const r=$("roster");r.innerHTML="";PL().forEach(p=>{const row=document.createElement("div");row.className="prow";const pills="G"+rate(p,"GK")+" D"+rate(p,"DEF")+" M"+rate(p,"MID")+" A"+rate(p,"FWD");row.innerHTML='<div class="avatar">'+(p.num!==""?p.num:initials(p.name))+'</div><div class="grow" onclick="openEdit('+p.id+')"><div class="pname">'+p.name+(p.injured?" 🚑":"")+'</div><div class="pmeta"><span class="rate-pill">'+pills+'</span> '+(p.num!==""?("#"+p.num):"no #")+' · tap to edit</div></div>';const t=document.createElement("div");t.className="toggle"+(p.available?" on":"");t.innerHTML='<div class="knob"></div>';t.onclick=(function(id){return function(){toggleAvail(id);};})(p.id);row.appendChild(t);r.appendChild(row);});
+  $("availCount").textContent=availPlayers().length+" available";}
+function showScreen(s){document.querySelectorAll(".screen").forEach(e=>e.classList.remove("active"));$("s-"+s).classList.add("active");document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.s===s));renderAll();}
+/* ============ install / PWA ============ */
 let deferredPrompt=null, installDismissed=false;
 try{installDismissed=localStorage.getItem("installDismissed")==="1";}catch(e){}
 window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();deferredPrompt=e;if(!isStandalone()&&!installDismissed)showInstallBar();});
@@ -599,34 +588,13 @@ function isStandalone(){return (window.matchMedia&&window.matchMedia("(display-m
 function isIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);}
 function hideInstallBar(){const b=$("installBar");if(b)b.style.display="none";}
 function dismissInstall(){installDismissed=true;try{localStorage.setItem("installDismissed","1");}catch(e){}hideInstallBar();}
-function showInstallBar(force){
-  const b=$("installBar");if(!b)return;
-  if(isStandalone()){b.style.display="none";return;}
-  if(installDismissed&&!force)return;
-  const msg=$("installMsg"),btn=$("installBtn");
-  if(deferredPrompt){msg.textContent="Install Team Subs as an app on your phone.";btn.style.display="";}
-  else if(isIOS()){msg.innerHTML="Add to home screen: tap the Share button, then “Add to Home Screen”.";btn.style.display="none";}
-  else {msg.innerHTML="To install: open your browser menu and choose “Add to Home screen” or “Install app”.";btn.style.display="none";}
-  b.style.display="flex";
-}
+function showInstallBar(force){const b=$("installBar");if(!b)return;if(isStandalone()){b.style.display="none";return;}if(installDismissed&&!force)return;const msg=$("installMsg"),btn=$("installBtn");if(deferredPrompt){msg.textContent="Install Team Subs as an app on your phone.";btn.style.display="";}else if(isIOS()){msg.innerHTML="Add to home screen: tap the Share button, then “Add to Home Screen”.";btn.style.display="none";}else{msg.innerHTML="To install: open your browser menu and choose “Add to Home screen” or “Install app”.";btn.style.display="none";}b.style.display="flex";}
 function doInstall(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;hideInstallBar();});}}
 function setLink(rel,href){let l=document.querySelector('link[rel="'+rel+'"]');if(!l){l=document.createElement("link");l.rel=rel;document.head.appendChild(l);}l.href=href;}
 function rrect(x,l,t,w,h,r){x.beginPath();x.moveTo(l+r,t);x.arcTo(l+w,t,l+w,t+h,r);x.arcTo(l+w,t+h,l,t+h,r);x.arcTo(l,t+h,l,t,r);x.arcTo(l,t,l+w,t,r);x.closePath();}
 function penta(x,cx,cy,r){x.beginPath();for(let i=0;i<5;i++){const a=-Math.PI/2+i*2*Math.PI/5,px=cx+r*Math.cos(a),py=cy+r*Math.sin(a);i?x.lineTo(px,py):x.moveTo(px,py);}x.closePath();}
-function setupPWA(){
-  try{
-    const c=document.createElement("canvas");c.width=512;c.height=512;const x=c.getContext("2d");
-    x.fillStyle="#d12f2f";rrect(x,0,0,512,512,96);x.fill();
-    x.fillStyle="#fff";x.beginPath();x.arc(256,196,94,0,Math.PI*2);x.fill();
-    x.fillStyle="#1c1c1e";penta(x,256,196,44);x.fill();
-    x.fillStyle="#fff";x.font="bold 132px Arial, sans-serif";x.textAlign="center";x.textBaseline="middle";x.fillText("SUBS",256,392);
-    const icon=c.toDataURL("image/png");
-    setLink("apple-touch-icon",icon);
-    const man={name:"Team Subs",short_name:"Team Subs",start_url:".",scope:".",display:"standalone",orientation:"portrait",background_color:"#f4f5f7",theme_color:"#d12f2f",icons:[{src:icon,sizes:"512x512",type:"image/png",purpose:"any"},{src:icon,sizes:"512x512",type:"image/png",purpose:"maskable"}]};
-    const url=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:"application/manifest+json"}));
-    setLink("manifest",url);
-  }catch(e){}
-}
-window.onload=function(){ setupPWA(); if(state.running)timer=setInterval(tick,1000); renderAll(); if(isIOS())showInstallBar(); };</script>
+function setupPWA(){try{const c=document.createElement("canvas");c.width=512;c.height=512;const x=c.getContext("2d");x.fillStyle=T().color;rrect(x,0,0,512,512,96);x.fill();x.fillStyle="#fff";x.beginPath();x.arc(256,196,94,0,Math.PI*2);x.fill();x.fillStyle="#1c1c1e";penta(x,256,196,44);x.fill();x.fillStyle="#fff";x.font="bold 132px Arial, sans-serif";x.textAlign="center";x.textBaseline="middle";x.fillText("SUBS",256,392);const icon=c.toDataURL("image/png");setLink("apple-touch-icon",icon);const man={name:"Team Subs",short_name:"Team Subs",start_url:".",scope:".",display:"standalone",orientation:"portrait",background_color:"#f4f5f7",theme_color:T().color,icons:[{src:icon,sizes:"512x512",type:"image/png",purpose:"any"},{src:icon,sizes:"512x512",type:"image/png",purpose:"maskable"}]};const url=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:"application/manifest+json"}));setLink("manifest",url);}catch(e){}}
+window.onload=function(){setupPWA();const g=G();if(g.running){g.refMs=nowMs();timer=setInterval(tick,1000);requestWake();}renderAll();if(isIOS())showInstallBar();};
+</script>
 </body>
 </html>
