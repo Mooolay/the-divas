@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+undefined<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -90,6 +90,9 @@
   .fval{width:52px;text-align:right;font-size:13px;font-variant-numeric:tabular-nums;font-weight:600;}
   .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4;}
   .center{text-align:center;}
+  .installbar{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--grass);border-radius:12px;padding:10px 12px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.05);}
+  .installbar .grow{font-size:13px;font-weight:600;line-height:1.35;}
+  .installbar button{padding:8px 12px;font-size:13px;flex:0 0 auto;}
   dialog{border:none;border-radius:14px;padding:0;max-width:92%;width:360px;}
   dialog::backdrop{background:rgba(0,0,0,.4);}
   .dlg{padding:16px;}
@@ -109,9 +112,12 @@
   </div>
   <button class="btn-ghost" style="padding:7px 11px;font-size:13px" onclick="resetGamePrompt()">Reset game</button>
 </header>
-
 <div class="wrap">
-
+  <div id="installBar" class="installbar" style="display:none">
+    <div id="installMsg" class="grow"></div>
+    <button id="installBtn" class="btn" style="display:none" onclick="doInstall()">Install</button>
+    <button class="btn-ghost" onclick="dismissInstall()">✕</button>
+  </div>
   <!-- ============ GAME ============ -->
   <div class="screen active" id="s-game">
     <div class="card clockcard">
@@ -123,9 +129,7 @@
         <button class="btn-ghost" onclick="nextHalf()">⏭ Next half</button>
       </div>
     </div>
-
     <div id="planArea"></div>
-
     <div class="card">
       <div class="btn-row">
         <button class="btn" onclick="planNow()">🔄 Plan subs now</button>
@@ -133,13 +137,11 @@
       </div>
       <div class="hint" id="rotHint"></div>
     </div>
-
     <div class="card">
       <h2>On the pitch</h2>
       <div class="pitch" id="pitch"></div>
       <div class="hint">Green ring = coming ON · red ring = coming OFF. Tap a player then another to swap manually.</div>
     </div>
-
     <div class="card">
       <h2 style="display:flex;justify-content:space-between;align-items:center">
         <span>Bench <span class="small" id="benchCount"></span></span>
@@ -147,7 +149,6 @@
       <div class="bench" id="bench"></div>
     </div>
   </div>
-
   <!-- ============ FAIR PLAY ============ -->
   <div class="screen" id="s-time">
     <div class="card">
@@ -156,7 +157,6 @@
       <div class="hint" id="fairHint"></div>
     </div>
   </div>
-
   <!-- ============ SETUP ============ -->
   <div class="screen" id="s-setup">
     <div class="card">
@@ -166,7 +166,7 @@
       <label class="fld">Half length (minutes)</label>
       <input type="number" id="halfLen" min="1" max="45" step="0.5" value="25" onchange="saveSettings();renderClock()">
       <label class="fld">Rotate subs every (minutes)</label>
-      <input type="number" id="rotMin" min="0" max="20" step="0.5" value="6.5" onchange="saveSettings();renderGame()">
+      <input type="number" id="rotMin" min="0" max="20" step="0.5" value="6" onchange="saveSettings();renderGame()">
       <label class="fld">How many to sub each rotation</label>
       <select id="subsPer" onchange="saveSettings();renderGame()">
         <option value="1">1 at a time</option>
@@ -175,13 +175,17 @@
         <option value="4">4 at a time</option>
         <option value="all">Whole bench (roll everyone)</option>
       </select>
+      <div class="prow" style="border:none;padding:8px 0 2px">
+        <div class="grow"><div class="pname" style="font-size:14px">Buzz when it's time to sub</div><div class="small">3 long vibrations each rotation (Android only)</div></div>
+        <div id="vibToggle" class="toggle" onclick="toggleVibrate()"><div class="knob"></div></div>
+      </div>
+      <button class="btn-ghost" style="width:100%" onclick="buzz(true)">📳 Test buzz</button>
       <div class="btn-row" style="margin-top:14px">
         <button class="btn-grass" onclick="autoLineup()">✨ Auto-fill best lineup</button>
         <button class="btn-ghost" onclick="benchAll()">Clear pitch</button>
       </div>
       <div class="hint">Auto-fill puts players in positions that match their ratings, and gives the spots to whoever has played least so far.</div>
     </div>
-
     <div class="card">
       <h2 style="display:flex;justify-content:space-between;align-items:center">
         <span>Squad — tap a name to set ratings</span>
@@ -189,21 +193,23 @@
       </h2>
       <div class="hint" style="margin-top:0;margin-bottom:6px">Toggle = available today. Pills show ratings: G goal · D def · M mid · A attack (1–3).</div>
       <div id="roster"></div>
+      <button class="btn-ghost" style="width:100%;margin-top:12px" onclick="addPlayer()">＋ Add player</button>
+    </div>
+    <div class="card center">
+      <button class="btn-ghost" onclick="showInstallBar(true)">📲 Add to home screen</button>
+      <div class="hint">Install this as an app on your phone so it opens full-screen.</div>
     </div>
     <div class="card center">
       <button class="btn-ghost" onclick="resetSeasonPrompt()">Reset all saved settings</button>
       <div class="hint">Clears numbers, ratings and today's minutes.</div>
     </div>
   </div>
-
 </div>
-
 <div class="tabs">
   <button class="active" data-s="game" onclick="showScreen('game')"><span class="ic">⚽</span>Game</button>
   <button data-s="time" onclick="showScreen('time')"><span class="ic">⏱️</span>Fair play</button>
   <button data-s="setup" onclick="showScreen('setup')"><span class="ic">⚙️</span>Setup</button>
 </div>
-
 <dialog id="editDlg"><div class="dlg">
   <h3 id="edName">Player</h3>
   <div class="small" style="margin-bottom:8px">Rate 1 (fine there) to 3 (best spot).</div>
@@ -214,8 +220,8 @@
     <button class="btn" onclick="saveEdit()">Save</button>
     <button class="btn-ghost" onclick="document.getElementById('editDlg').close()">Cancel</button>
   </div>
+  <button class="btn-ghost" style="width:100%;margin-top:8px;color:var(--red);border-color:#f3c0c0" onclick="removePlayer()">🗑 Remove from squad</button>
 </div></dialog>
-
 <script>
 /* ---------------- data ---------------- */
 const ROSTER = [
@@ -234,7 +240,6 @@ let state=load();
 let plan=null;        // [{inId,outId,role}]
 let sel=null;         // manual selection
 let editId=null, tmpRate=null;
-
 function freshPlayers(){
   return ROSTER.map((n,i)=>({
     id:i,name:n,num:DEFNUM[n]??"",
@@ -243,19 +248,19 @@ function freshPlayers(){
   }));
 }
 function defaultState(){
-  return {players:freshPlayers(),formation:"2-3-1",halfLen:25,rotMin:6.5,subsPer:"all",
+  return {players:freshPlayers(),formation:"2-3-1",halfLen:25,rotMin:6,subsPer:"all",vibrate:true,
     half:1,clock:0,running:false,lastSubAt:0};
 }
 function load(){
   try{
     const s=JSON.parse(localStorage.getItem(LS));
-    if(s&&s.players&&s.players.length===ROSTER.length){ s.players.forEach(migrate); return s; }
+    if(s&&Array.isArray(s.players)&&s.players.length){ s.players.forEach(migrate); return s; }
   }catch(e){}
   try{
     const o=JSON.parse(localStorage.getItem("subsmgr_v1"));
-    if(o&&o.players&&o.players.length===ROSTER.length){
+    if(o&&Array.isArray(o.players)&&o.players.length){
       o.players.forEach(migrate);
-      o.subsPer=o.subsPer||"all"; o.rotMin=o.rotMin||6.5;
+      o.subsPer=o.subsPer||"all"; o.rotMin=o.rotMin||6;
       return o;
     }
   }catch(e){}
@@ -271,7 +276,6 @@ function migrate(p){
   ["GK","DEF","MID","FWD"].forEach(k=>{if(!p.rate[k]||p.rate[k]<1)p.rate[k]=1;});
 }
 function save(){ try{ localStorage.setItem(LS,JSON.stringify(state)); }catch(e){} }
-
 /* ---------------- helpers ---------------- */
 const $=id=>document.getElementById(id);
 function initials(n){const p=n.trim().split(/\s+/);return (p[0][0]+(p[1]?p[1][0]:"")).toUpperCase();}
@@ -282,7 +286,6 @@ function fieldPlayers(){return state.players.filter(p=>p.status==="field");}
 function benchPlayers(){return state.players.filter(p=>p.status==="bench"&&p.available);}
 function availPlayers(){return state.players.filter(p=>p.available);}
 function rate(p,r){return (p.rate&&p.rate[r])||0;}
-
 function slots(){
   const f=FORMATIONS[state.formation];const arr=[{role:"GK"}];
   for(let i=0;i<f.def;i++)arr.push({role:"DEF"});
@@ -300,7 +303,6 @@ function slotXY(){
 }
 function rotSec(){return Math.round((state.rotMin||0)*60);}
 function effCount(){const b=benchPlayers().length;return state.subsPer==="all"?b:Math.min(parseInt(state.subsPer),b);}
-
 /* ---------------- screens ---------------- */
 function showScreen(s){
   document.querySelectorAll(".screen").forEach(e=>e.classList.remove("active"));
@@ -308,7 +310,6 @@ function showScreen(s){
   document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.s===s));
   renderAll();
 }
-
 /* ---------------- manual swap ---------------- */
 function tapPlayer(id){
   const p=P(id);
@@ -326,7 +327,6 @@ function subIn(inId,outId){
   ip.status="field";ip.slot=op.slot;op.status="bench";op.slot=null;
   state.lastSubAt=state.clock;
 }
-
 /* ---------------- clock ---------------- */
 let timer=null;
 function toggleClock(){
@@ -340,6 +340,7 @@ function tick(){
   fieldPlayers().forEach(p=>p.secs++);
   if(!plan && rotSec()>0 && (state.clock-state.lastSubAt)>=rotSec() && benchPlayers().length>0 && fieldPlayers().some(p=>slotRole(p.slot)!=="GK")){
     makePlan();
+    if(plan)buzz();
   }
   updateLive();
   if(state.clock%5===0)save();
@@ -354,7 +355,7 @@ function resetGamePrompt(){
   if(confirm("Reset the clock and all minutes for today? (Squad, numbers and ratings are kept.)")){
     state.players.forEach(p=>{p.secs=0;p.status=p.available?"bench":"out";p.slot=null;});
     state.half=1;state.clock=0;state.running=false;state.lastSubAt=0;sel=null;plan=null;
-    save();renderAll();showScreen('setup');
+    save();renderAll();showScreen("setup");
   }
 }
 function resetSeasonPrompt(){
@@ -362,7 +363,6 @@ function resetSeasonPrompt(){
     state=defaultState();plan=null;save();renderAll();
   }
 }
-
 /* ---------------- lineup ---------------- */
 function autoLineup(){
   const sl=slots();
@@ -374,13 +374,12 @@ function autoLineup(){
     if(best){best.status="field";best.slot=i;used.add(best.id);}
   });
   state.players.forEach(p=>{if(p.available&&!used.has(p.id))p.status="bench";});
-  plan=null;save();renderAll();showScreen('game');
+  plan=null;save();renderAll();showScreen("game");
 }
 function benchAll(){
   state.players.forEach(p=>{if(p.status==="field"){p.status="bench";p.slot=null;}});
   plan=null;save();renderAll();
 }
-
 /* ---------------- rotation plan (block subs) ---------------- */
 function roleRank(r){return r==="DEF"?0:r==="FWD"?1:2;}
 function makePlan(){
@@ -400,6 +399,12 @@ function makePlan(){
   });
   plan=pairs;
 }
+function buzz(test){
+  if(!test && state.vibrate===false)return;
+  if(navigator.vibrate){try{navigator.vibrate([700,250,700,250,700]);}catch(e){}}
+  else if(test)alert("This phone's browser doesn't support vibration (iPhones don't). The on-screen sub list will still appear.");
+}
+function toggleVibrate(){const cur=state.vibrate!==false;state.vibrate=!cur;save();renderSetup();}
 function planNow(){makePlan();renderGame();}
 function cancelPlan(){plan=null;renderGame();}
 function applyPlan(){
@@ -416,8 +421,20 @@ function swapKeeper(){
   if(!inC){alert("No bench player to put in goal.");return;}
   if(confirm("Put "+inC.name+" in goal for "+gk.name+"?")){subIn(inC.id,gk.id);save();renderGame();renderFair();}
 }
-
 /* ---------------- editing ---------------- */
+function nextId(){return state.players.reduce((m,p)=>Math.max(m,p.id),-1)+1;}
+function addPlayer(){
+  const name=prompt("New player's name:");
+  if(!name||!name.trim())return;
+  const p={id:nextId(),name:name.trim(),num:"",rate:{GK:1,DEF:2,MID:2,FWD:2},available:true,status:"bench",slot:null,secs:0};
+  state.players.push(p);plan=null;save();renderAll();openEdit(p.id);
+}
+function removePlayer(){
+  if(editId===null)return;const p=P(editId);if(!p)return;
+  if(!confirm("Remove "+p.name+" from the squad? This deletes their info and minutes."))return;
+  state.players=state.players.filter(x=>x.id!==editId);
+  editId=null;plan=null;document.getElementById("editDlg").close();save();renderAll();
+}
 function openEdit(id){
   editId=id;const p=P(id);tmpRate={...p.rate};
   $("edName").textContent=p.name;$("edNum").value=p.num;
@@ -427,7 +444,7 @@ function renderRateRows(){
   const c=$("rateRows");c.innerHTML="";
   LINES.forEach(([k,lab])=>{
     const row=document.createElement("div");row.className="raterow";
-    let segs="";for(let v=1;v<=3;v++){segs+='<button class="'+(tmpRate[k]===v?'sel':'')+'" onclick="setRate(\''+k+'\','+v+')">'+v+'</button>';}
+    let segs="";for(let v=1;v<=3;v++){segs+='<button class="'+(tmpRate[k]===v?"sel":"")+'" onclick="setRate(\''+k+'\','+v+')">'+v+'</button>';}
     row.innerHTML='<div class="rlab">'+lab+'</div><div class="seg">'+segs+'</div>';
     c.appendChild(row);
   });
@@ -443,7 +460,6 @@ function toggleAvail(id){
   if(!p.available){p.status="out";p.slot=null;}else if(p.status==="out")p.status="bench";
   plan=null;save();renderAll();
 }
-
 /* ---------------- settings ---------------- */
 function changeFormation(){
   state.formation=$("formationSel").value;
@@ -457,7 +473,6 @@ function saveSettings(){
   state.subsPer=$("subsPer").value;
   save();
 }
-
 /* ---------------- render ---------------- */
 function renderAll(){renderClock();renderGame();renderFair();renderSetup();}
 function renderClock(){
@@ -470,10 +485,8 @@ function renderClock(){
   $("startBtn").className=state.running?"btn":"btn-grass";
   $("hdrSub").textContent="7-a-side · "+state.formation+" · 2 halves";
 }
-
 function inIds(){return plan?plan.map(p=>p.inId):[];}
 function outIds(){return plan?plan.map(p=>p.outId):[];}
-
 function renderPlan(){
   const area=$("planArea");area.innerHTML="";
   if(!plan||plan.length===0)return;
@@ -494,7 +507,6 @@ function renderPlan(){
     +'<div class="hint">Tell each player who they are replacing — they go on when you call their name.</div>';
   area.appendChild(box);
 }
-
 function renderGame(){
   const pit=$("pitch");
   pit.innerHTML='<div class="line"></div><div class="circle"></div><div class="box top"></div><div class="box bot"></div>';
@@ -506,7 +518,7 @@ function renderGame(){
     if(pl){
       const off=outs.includes(pl.id);
       d.innerHTML='<div class="role">'+(isGK?"GK":s.role)+'</div>'
-        +'<div class="chip '+(isGK?'gk':'')+' '+(sel===pl.id?'sel':'')+' '+(off?'off':'')+'">'+(pl.num!==""?pl.num:initials(pl.name))+'</div>'
+        +'<div class="chip '+(isGK?"gk":"")+' '+(sel===pl.id?"sel":"")+' '+(off?"off":"")+'">'+(pl.num!==""?pl.num:initials(pl.name))+'</div>'
         +'<div class="nm">'+first(pl.name)+'</div><div class="mins">'+fmt(pl.secs)+'</div>';
       d.onclick=(function(id){return function(){tapPlayer(id);};})(pl.id);
     }else{
@@ -534,7 +546,6 @@ function renderGame(){
   $("rotHint").textContent=state.rotMin>0?("Auto-prompts to roll "+everyTxt+" every "+state.rotMin+" min. Or plan a rotation now."):"Rotation prompts off. Plan subs manually.";
   renderPlan();
 }
-
 function renderFair(){
   const f=$("fairness");f.innerHTML="";
   const ps=availPlayers().slice().sort((a,b)=>a.secs-b.secs);
@@ -552,12 +563,12 @@ function renderFair(){
   });
   $("fairHint").textContent=ps.length?("Average so far "+fmt(Math.round(avg))+". Red = below average (get them on), 🟢 = on now."):"Mark players available in Setup.";
 }
-
 function renderSetup(){
   const fs=$("formationSel");
   if(fs.options.length===0)Object.keys(FORMATIONS).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k+"  ("+FORMATIONS[k].def+" def, "+FORMATIONS[k].mid+" mid, "+FORMATIONS[k].fwd+" fwd)";fs.appendChild(o);});
   fs.value=state.formation;
   $("halfLen").value=state.halfLen;$("rotMin").value=state.rotMin;$("subsPer").value=state.subsPer;
+  const vt=$("vibToggle");if(vt)vt.className="toggle"+((state.vibrate!==false)?" on":"");
   const r=$("roster");r.innerHTML="";
   state.players.forEach(p=>{
     const row=document.createElement("div");row.className="prow";
@@ -572,7 +583,6 @@ function renderSetup(){
   });
   $("availCount").textContent=availPlayers().length+" available";
 }
-
 function updateLive(){
   $("clockDisp").textContent=fmt(state.clock);
   const over=state.clock>=state.halfLen*60;
@@ -581,8 +591,43 @@ function updateLive(){
   $("halfBadge").textContent="Half "+state.half+" · running";
   renderGame();renderFair();
 }
-
-window.onload=function(){ if(state.running)timer=setInterval(tick,1000); renderAll(); };
-</script>
+/* ---------------- install / PWA ---------------- */
+let deferredPrompt=null, installDismissed=false;
+try{installDismissed=localStorage.getItem("installDismissed")==="1";}catch(e){}
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();deferredPrompt=e;if(!isStandalone()&&!installDismissed)showInstallBar();});
+window.addEventListener("appinstalled",function(){deferredPrompt=null;hideInstallBar();});
+function isStandalone(){return (window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||window.navigator.standalone===true;}
+function isIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);}
+function hideInstallBar(){const b=$("installBar");if(b)b.style.display="none";}
+function dismissInstall(){installDismissed=true;try{localStorage.setItem("installDismissed","1");}catch(e){}hideInstallBar();}
+function showInstallBar(force){
+  const b=$("installBar");if(!b)return;
+  if(isStandalone()){b.style.display="none";return;}
+  if(installDismissed&&!force)return;
+  const msg=$("installMsg"),btn=$("installBtn");
+  if(deferredPrompt){msg.textContent="Install Team Subs as an app on your phone.";btn.style.display="";}
+  else if(isIOS()){msg.innerHTML="Add to home screen: tap the Share button, then “Add to Home Screen”.";btn.style.display="none";}
+  else {msg.innerHTML="To install: open your browser menu and choose “Add to Home screen” or “Install app”.";btn.style.display="none";}
+  b.style.display="flex";
+}
+function doInstall(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;hideInstallBar();});}}
+function setLink(rel,href){let l=document.querySelector('link[rel="'+rel+'"]');if(!l){l=document.createElement("link");l.rel=rel;document.head.appendChild(l);}l.href=href;}
+function rrect(x,l,t,w,h,r){x.beginPath();x.moveTo(l+r,t);x.arcTo(l+w,t,l+w,t+h,r);x.arcTo(l+w,t+h,l,t+h,r);x.arcTo(l,t+h,l,t,r);x.arcTo(l,t,l+w,t,r);x.closePath();}
+function penta(x,cx,cy,r){x.beginPath();for(let i=0;i<5;i++){const a=-Math.PI/2+i*2*Math.PI/5,px=cx+r*Math.cos(a),py=cy+r*Math.sin(a);i?x.lineTo(px,py):x.moveTo(px,py);}x.closePath();}
+function setupPWA(){
+  try{
+    const c=document.createElement("canvas");c.width=512;c.height=512;const x=c.getContext("2d");
+    x.fillStyle="#d12f2f";rrect(x,0,0,512,512,96);x.fill();
+    x.fillStyle="#fff";x.beginPath();x.arc(256,196,94,0,Math.PI*2);x.fill();
+    x.fillStyle="#1c1c1e";penta(x,256,196,44);x.fill();
+    x.fillStyle="#fff";x.font="bold 132px Arial, sans-serif";x.textAlign="center";x.textBaseline="middle";x.fillText("SUBS",256,392);
+    const icon=c.toDataURL("image/png");
+    setLink("apple-touch-icon",icon);
+    const man={name:"Team Subs",short_name:"Team Subs",start_url:".",scope:".",display:"standalone",orientation:"portrait",background_color:"#f4f5f7",theme_color:"#d12f2f",icons:[{src:icon,sizes:"512x512",type:"image/png",purpose:"any"},{src:icon,sizes:"512x512",type:"image/png",purpose:"maskable"}]};
+    const url=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:"application/manifest+json"}));
+    setLink("manifest",url);
+  }catch(e){}
+}
+window.onload=function(){ setupPWA(); if(state.running)timer=setInterval(tick,1000); renderAll(); if(isIOS())showInstallBar(); };</script>
 </body>
 </html>
