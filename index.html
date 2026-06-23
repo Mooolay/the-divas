@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Team Subs Manager</title>
+<style>
+  :root{ --red:#d12f2f; --red-d:#b02525; --bg:#f4f5f7; --card:#fff; --ink:#1c1c1e; --muted:#7a7a82; --line:#e6e6ea; --grass:#3aa45b; --grass-d:#2f8c4d; --gold:#f4c430; --blue:#2f6fd1; }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;}
+  header{background:var(--red);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 6px rgba(0,0,0,.15);}
+  header h1{font-size:18px;margin:0;font-weight:700;}
+  header .sub{font-size:12px;opacity:.85;font-weight:400;}
+  .wrap{max-width:560px;margin:0 auto;padding:14px 14px 90px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  h2{font-size:15px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  button{font-family:inherit;font-size:15px;cursor:pointer;border:none;border-radius:10px;padding:11px 14px;font-weight:600;}
+  .btn{background:var(--red);color:#fff;}
+  .btn:active{background:var(--red-d);}
+  .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
+  .btn-grass{background:var(--grass);color:#fff;}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .btn-row > button{flex:1;}
+  label.fld{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px;font-weight:600;}
+  select,input[type=number],input[type=text]{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:#fff;font-family:inherit;}
+  .tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:20;}
+  .tabs button{flex:1;background:none;color:var(--muted);font-size:11px;font-weight:600;padding:8px 2px;border-radius:0;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .tabs button .ic{font-size:20px;line-height:1;}
+  .tabs button.active{color:var(--red);}
+  .screen{display:none;}
+  .screen.active{display:block;}
+  .prow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
+  .prow:last-child{border-bottom:none;}
+  .avatar{width:38px;height:38px;border-radius:50%;background:#d9d9de;color:#555;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+  .pname{font-weight:600;font-size:15px;}
+  .pmeta{font-size:12px;color:var(--muted);}
+  .grow{flex:1;min-width:0;}
+  .pref-pill{font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:#eef;color:#3340a0;}
+  .toggle{width:50px;height:30px;border-radius:30px;background:#d2d2d8;position:relative;transition:.15s;flex-shrink:0;}
+  .toggle.on{background:var(--grass);}
+  .toggle .knob{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.3);}
+  .toggle.on .knob{left:23px;}
+  .small{font-size:13px;color:var(--muted);}
+  .pitch{position:relative;width:100%;aspect-ratio:3/4;background:repeating-linear-gradient(0deg,var(--grass) 0 24px,var(--grass-d) 24px 48px);border:3px solid rgba(255,255,255,.7);border-radius:12px;overflow:hidden;margin-bottom:6px;}
+  .pitch .line{position:absolute;left:5%;right:5%;height:2px;background:rgba(255,255,255,.55);top:50%;}
+  .pitch .circle{position:absolute;left:50%;top:50%;width:70px;height:70px;border:2px solid rgba(255,255,255,.55);border-radius:50%;transform:translate(-50%,-50%);}
+  .pitch .box{position:absolute;left:25%;right:25%;height:13%;border:2px solid rgba(255,255,255,.5);}
+  .pitch .box.top{top:0;border-top:none;}
+  .pitch .box.bot{bottom:0;border-bottom:none;}
+  .slot{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;width:74px;}
+  .chip{width:50px;height:50px;border-radius:50%;background:#fff;border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--ink);box-shadow:0 2px 5px rgba(0,0,0,.35);}
+  .chip.gk{border-color:#222;background:#ffd54a;}
+  .chip.sel{border-color:var(--blue);box-shadow:0 0 0 4px rgba(47,111,209,.5);}
+  .slot .nm{font-size:11px;color:#fff;font-weight:700;margin-top:3px;text-shadow:0 1px 2px rgba(0,0,0,.7);text-align:center;line-height:1.1;max-width:74px;}
+  .slot .mins{font-size:10px;color:#fff;background:rgba(0,0,0,.35);border-radius:8px;padding:0 5px;margin-top:2px;}
+  .slot .role{font-size:9px;color:#fff;opacity:.8;font-weight:700;letter-spacing:.05em;}
+  .bench{display:flex;flex-wrap:wrap;gap:8px;}
+  .bchip{display:flex;flex-direction:column;align-items:center;width:64px;padding:6px 2px;border:1px solid var(--line);border-radius:10px;background:#fff;}
+  .bchip .av{width:40px;height:40px;border-radius:50%;background:#e9e9ee;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .bchip.sel{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,209,.35);}
+  .bchip .bn{font-size:11px;font-weight:600;margin-top:3px;text-align:center;line-height:1.05;}
+  .bchip .bm{font-size:10px;color:var(--muted);}
+  .clockcard{text-align:center;}
+  .clock{font-size:52px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px;line-height:1;}
+  .half-badge{display:inline-block;background:var(--ink);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;}
+  .banner{background:var(--gold);color:#3a2f00;border-radius:10px;padding:10px 12px;font-weight:600;font-size:14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .banner.warn{background:#ffe08a;}
+  .banner button{padding:7px 12px;font-size:13px;}
+  .fbar{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);}
+  .fbar:last-child{border-bottom:none;}
+  .fbar .lab{width:96px;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .track{flex:1;height:16px;background:#eee;border-radius:8px;overflow:hidden;}
+  .fill{height:100%;background:var(--grass);border-radius:8px;}
+  .fill.low{background:var(--red);}
+  .fill.mid{background:var(--gold);}
+  .fval{width:52px;text-align:right;font-size:13px;font-variant-numeric:tabular-nums;font-weight:600;}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4;}
+  .center{text-align:center;}
+  dialog{border:none;border-radius:14px;padding:0;max-width:90%;width:340px;}
+  dialog::backdrop{background:rgba(0,0,0,.4);}
+  .dlg{padding:16px;}
+  .dlg h3{margin:0 0 10px;font-size:16px;}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1 id="teamTitle">The Divas</h1>
+    <div class="sub" id="hdrSub">7-a-side &middot; 2 halves</div>
+  </div>
+  <button class="btn-ghost" style="padding:7px 11px;font-size:13px" onclick="resetGamePrompt()">Reset game</button>
+</header>
+<div class="wrap">
+  <div class="screen active" id="s-game">
+    <div class="card clockcard">
+      <div class="half-badge" id="halfBadge">Not started</div>
+      <div class="clock" id="clockDisp">00:00</div>
+      <div class="small" id="clockSub">Half length: 25:00</div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn-grass" id="startBtn" onclick="toggleClock()">&#9654; Start</button>
+        <button class="btn-ghost" onclick="nextHalf()">&#9197; Next half</button>
+      </div>
+    </div>
+    <div id="subBanner"></div>
+    <div class="card">
+      <h2>On the pitch</h2>
+      <div class="pitch" id="pitch"></div>
+      <div class="hint">Tap a player to select, then tap another to swap them. Tap a pitch player then a bench player to sub.</div>
+    </div>
+    <div class="card">
+      <h2><span>Bench <span class="small" id="benchCount"></span></span></h2>
+      <div class="bench" id="bench"></div>
+    </div>
+    <div class="card">
+      <div class="btn-row">
+        <button class="btn" onclick="autoSuggest(true)">Suggest a sub</button>
+        <button class="btn-ghost" onclick="swapKeeper()">Swap keeper</button>
+      </div>
+    </div>
+  </div>
+  <div class="screen" id="s-time">
+    <div class="card">
+      <h2>Minutes played today</h2>
+      <div id="fairness"></div>
+      <div class="hint" id="fairHint"></div>
+    </div>
+  </div>
+  <div class="screen" id="s-setup">
+    <div class="card">
+      <h2>Match settings</h2>
+      <label class="fld">Formation (6 outfield + keeper)</label>
+      <select id="formationSel" onchange="changeFormation()"></select>
+      <label class="fld">Half length (minutes)</label>
+      <input type="number" id="halfLen" min="1" max="45" value="25" onchange="saveSettings();renderClock()">
+      <label class="fld">Suggest a sub every (minutes)</label>
+      <input type="number" id="rotMin" min="1" max="20" value="5" onchange="saveSettings()">
+      <div class="btn-row" style="margin-top:14px">
+        <button class="btn-grass" onclick="autoLineup()">Auto-fill best lineup</button>
+        <button class="btn-ghost" onclick="benchAll()">Clear pitch</button>
+      </div>
+      <div class="hint">Auto-fill places your available players by preferred position and gives priority to whoever has played the least so far today.</div>
+    </div>
+    <div class="card">
+      <h2><span>Squad &mdash; tap to mark available</span> <span class="small" id="availCount"></span></h2>
+      <div id="roster"></div>
+    </div>
+    <div class="card center">
+      <button class="btn-ghost" onclick="resetSeasonPrompt()">Reset all saved settings</button>
+      <div class="hint">Clears jersey numbers, preferred positions and today's minutes.</div>
+    </div>
+  </div>
+</div>
+<div class="tabs">
+  <button class="active" data-s="game" onclick="showScreen('game')"><span class="ic">&#9917;</span>Game</button>
+  <button data-s="time" onclick="showScreen('time')"><span class="ic">&#9201;</span>Fair play</button>
+  <button data-s="setup" onclick="showScreen('setup')"><span class="ic">&#9881;</span>Setup</button>
+</div>
+<dialog id="editDlg"><div class="dlg">
+  <h3 id="edName">Player</h3>
+  <label class="fld">Jersey number</label>
+  <input type="number" id="edNum" min="0" max="99">
+  <label class="fld">Preferred position</label>
+  <select id="edPref">
+    <option value="ANY">Anywhere</option>
+    <option value="GK">Goalkeeper</option>
+    <option value="DEF">Defender</option>
+    <option value="MID">Midfield</option>
+    <option value="FWD">Forward / Striker</option>
+  </select>
+  <div class="btn-row" style="margin-top:14px">
+    <button class="btn" onclick="saveEdit()">Save</button>
+    <button class="btn-ghost" onclick="document.getElementById('editDlg').close()">Cancel</button>
+  </div>
+</div></dialog>
+<script>
+const ROSTER = [
+  "Charlotte Lawrance","Kiera Hohneck","Lydia Shan","Mackenzie Clouston",
+  "Madison Gibney","Nieve McLay","Olivia Calkin","Renn Foster",
+  "Rosa Heeney","Te Ahurei Kingi","Zara Muntendam"
+];
+const DEFNUM = {"Nieve McLay":7,"Olivia Calkin":10};
+const FORMATIONS = {
+  "2-3-1": {def:2,mid:3,fwd:1},
+  "3-2-1": {def:3,mid:2,fwd:1},
+  "2-2-2": {def:2,mid:2,fwd:2},
+  "3-3":   {def:3,mid:3,fwd:0},
+  "1-3-2": {def:1,mid:3,fwd:2}
+};
+const LS = "subsmgr_divas_v1";
+let state = load();
+function freshPlayers(){
+  return ROSTER.map((n,i)=>({
+    id:i, name:n, num:DEFNUM[n]??"", pref:"ANY",
+    available:true, status:"bench", slot:null, secs:0
+  }));
+}
+function defaultState(){
+  return { players:freshPlayers(), formation:"2-3-1", halfLen:25, rotMin:5, half:1, clock:0, running:false, lastSubAt:0 };
+}
+function load(){
+  try{ const s=JSON.parse(localStorage.getItem(LS)); if(s&&s.players&&s.players.length===ROSTER.length) return s; }catch(e){}
+  return defaultState();
+}
+function save(){ try{ localStorage.setItem(LS,JSON.stringify(state)); }catch(e){} }
+const $=id=>document.getElementById(id);
+function initials(n){const p=n.trim().split(/\s+/);return (p[0][0]+(p[1]?p[1][0]:"")).toUpperCase();}
+function fmt(s){const m=Math.floor(s/60),x=s%60;return String(m).padStart(2,"0")+":"+String(x).padStart(2,"0");}
+function P(id){return state.players.find(p=>p.id===id);}
+function fieldPlayers(){return state.players.filter(p=>p.status==="field");}
+function benchPlayers(){return state.players.filter(p=>p.status==="bench"&&p.available);}
+function availPlayers(){return state.players.filter(p=>p.available);}
+function slots(){
+  const f=FORMATIONS[state.formation];
+  const arr=[{role:"GK"}];
+  for(let i=0;i<f.def;i++)arr.push({role:"DEF"});
+  for(let i=0;i<f.mid;i++)arr.push({role:"MID"});
+  for(let i=0;i<f.fwd;i++)arr.push({role:"FWD"});
+  return arr;
+}
+function slotRole(i){return slots()[i]?.role||"MID";}
+function slotXY(){
+  const f=FORMATIONS[state.formation], out=[];
+  out.push([50,90]);
+  const rows=[["DEF",f.def,74],["MID",f.mid,50],["FWD",f.fwd,26]];
+  rows.forEach(([role,n,y])=>{
+    for(let i=0;i<n;i++){
+      const x = n===1?50: 18 + (64*i/(n-1));
+      out.push([x,y]);
+    }
+  });
+  return out;
+}
+function showScreen(s){
+  document.querySelectorAll(".screen").forEach(e=>e.classList.remove("active"));
+  $("s-"+s).classList.add("active");
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.s===s));
+  renderAll();
+}
+let sel=null;
+function tapPlayer(id){
+  const p=P(id);
+  if(sel===null){ sel=id; renderGame(); return; }
+  if(sel===id){ sel=null; renderGame(); return; }
+  const a=P(sel), b=p;
+  if(a.status==="field"&&b.status==="field"){
+    const t=a.slot; a.slot=b.slot; b.slot=t;
+  } else if(a.status==="field"&&b.status==="bench"){
+    subIn(b.id,a.id);
+  } else if(a.status==="bench"&&b.status==="field"){
+    subIn(a.id,b.id);
+  } else { sel=id; renderGame(); return; }
+  sel=null; save(); renderGame(); renderFair();
+}
+function subIn(inId,outId){
+  const ip=P(inId), op=P(outId);
+  ip.status="field"; ip.slot=op.slot;
+  op.status="bench"; op.slot=null;
+  state.lastSubAt=state.clock;
+}
+let timer=null;
+function toggleClock(){
+  state.running=!state.running;
+  if(state.running){ if(!timer) timer=setInterval(tick,1000); }
+  save(); renderClock();
+}
+function tick(){
+  if(!state.running) return;
+  state.clock++;
+  fieldPlayers().forEach(p=>p.secs++);
+  updateLiveNumbers();
+  if(state.clock % 5 === 0) save();
+}
+function nextHalf(){
+  state.half = state.half>=2?2:state.half+1;
+  state.clock=0; state.lastSubAt=0; state.running=false;
+  save(); renderClock(); renderGame();
+  if(state.half===2) setTimeout(()=>alert("Second half — remember to swap your keeper if you planned to. Tap Swap keeper."),50);
+}
+function resetGamePrompt(){
+  if(confirm("Reset the clock and all minutes for today? (Squad, numbers and positions are kept.)")){
+    state.players.forEach(p=>{p.secs=0;p.status=p.available?"bench":"out";p.slot=null;});
+    state.half=1;state.clock=0;state.running=false;state.lastSubAt=0;sel=null;
+    save();renderAll();showScreen('setup');
+  }
+}
+function resetSeasonPrompt(){
+  if(confirm("Reset EVERYTHING to defaults? Clears numbers, preferred positions and minutes.")){
+    state=defaultState();save();renderAll();
+  }
+}
+function autoLineup(){
+  const sl=slots();
+  state.players.forEach(p=>{if(p.status==="field"){p.status="bench";p.slot=null;}});
+  const pool=availPlayers().slice().sort((a,b)=>a.secs-b.secs);
+  const used=new Set();
+  sl.forEach((s,i)=>{
+    let pick = pool.find(p=>!used.has(p.id)&&p.pref===s.role)
+            || pool.find(p=>!used.has(p.id)&&p.pref==="ANY")
+            || pool.find(p=>!used.has(p.id));
+    if(pick){ pick.status="field"; pick.slot=i; used.add(pick.id); }
+  });
+  state.players.forEach(p=>{if(p.available&&!used.has(p.id)){p.status="bench";} });
+  save();renderAll();showScreen('game');
+}
+function benchAll(){
+  state.players.forEach(p=>{if(p.status==="field"){p.status="bench";p.slot=null;}});
+  save();renderAll();
+}
+function autoSuggest(apply){
+  const outC = fieldPlayers().filter(p=>slotRole(p.slot)!=="GK").sort((a,b)=>b.secs-a.secs)[0];
+  const bench = benchPlayers();
+  if(!outC || bench.length===0){ if(apply) alert("No bench players available to sub on."); return null; }
+  const role = slotRole(outC.slot);
+  let inC = bench.filter(p=>p.pref===role).sort((a,b)=>a.secs-b.secs)[0]
+        || bench.filter(p=>p.pref==="ANY").sort((a,b)=>a.secs-b.secs)[0]
+        || bench.slice().sort((a,b)=>a.secs-b.secs)[0];
+  if(apply){ subIn(inC.id,outC.id); save(); renderGame(); renderFair(); return null; }
+  return {out:outC,in:inC,role};
+}
+function swapKeeper(){
+  const gk = fieldPlayers().find(p=>slotRole(p.slot)==="GK");
+  const bench = benchPlayers();
+  if(!gk){ alert("No keeper currently on the pitch."); return; }
+  let inC = bench.filter(p=>p.pref==="GK").sort((a,b)=>a.secs-b.secs)[0]
+        || bench.slice().sort((a,b)=>a.secs-b.secs)[0];
+  if(!inC){ alert("No bench player to put in goal."); return; }
+  if(confirm("Put "+inC.name+" in goal for "+gk.name+"?")){
+    subIn(inC.id,gk.id); save(); renderGame(); renderFair();
+  }
+}
+let editId=null;
+function openEdit(id){
+  editId=id; const p=P(id);
+  $("edName").textContent=p.name;
+  $("edNum").value=p.num; $("edPref").value=p.pref;
+  $("editDlg").showModal();
+}
+function saveEdit(){
+  const p=P(editId);
+  p.num = $("edNum").value===""?"":parseInt($("edNum").value);
+  p.pref = $("edPref").value;
+  $("editDlg").close(); save(); renderAll();
+}
+function toggleAvail(id){
+  const p=P(id); p.available=!p.available;
+  if(!p.available){ p.status="out"; p.slot=null; }
+  else if(p.status==="out"){ p.status="bench"; }
+  save(); renderAll();
+}
+function changeFormation(){
+  state.formation=$("formationSel").value;
+  const n=slots().length;
+  state.players.forEach(p=>{if(p.status==="field"&&p.slot>=n){p.status="bench";p.slot=null;}});
+  save(); renderAll();
+}
+function saveSettings(){
+  state.halfLen=Math.max(1,parseInt($("halfLen").value)||25);
+  state.rotMin=Math.max(0,parseInt($("rotMin").value)||0);
+  save();
+}
+function renderAll(){renderClock();renderGame();renderFair();renderSetup();}
+function renderClock(){
+  $("halfBadge").textContent = state.running? ("Half "+state.half+" · running")
+       : (state.clock>0? ("Half "+state.half+" · paused") : "Not started");
+  $("clockDisp").textContent = fmt(state.clock);
+  const over = state.clock >= state.halfLen*60;
+  $("clockDisp").style.color = over? "var(--red)":"";
+  $("clockSub").textContent = ("Half length "+fmt(state.halfLen*60)) + (over? " · TIME UP":"");
+  $("startBtn").textContent = state.running? "Pause":"Start";
+  $("startBtn").className = state.running? "btn":"btn-grass";
+  $("hdrSub").textContent = "7-a-side · "+state.formation+" · 2 halves";
+}
+function renderGame(){
+  const pit=$("pitch");
+  pit.innerHTML = '<div class="line"></div><div class="circle"></div><div class="box top"></div><div class="box bot"></div>';
+  const xy=slotXY(), sl=slots();
+  sl.forEach((s,i)=>{
+    const [x,y]=xy[i];
+    const pl=fieldPlayers().find(p=>p.slot===i);
+    const d=document.createElement("div");
+    d.className="slot"; d.style.left=x+"%"; d.style.top=y+"%";
+    const isGK=s.role==="GK";
+    if(pl){
+      d.innerHTML='<div class="role">'+(isGK?"GK":s.role)+'</div>'+
+        '<div class="chip '+(isGK?"gk":"")+' '+(sel===pl.id?"sel":"")+'">'+(pl.num!==""?pl.num:initials(pl.name))+'</div>'+
+        '<div class="nm">'+pl.name.split(" ")[0]+'</div>'+
+        '<div class="mins">'+fmt(pl.secs)+'</div>';
+      d.onclick=()=>tapPlayer(pl.id);
+    } else {
+      d.innerHTML='<div class="role">'+(isGK?"GK":s.role)+'</div>'+
+        '<div class="chip" style="border-style:dashed;border-color:#fff;background:rgba(255,255,255,.25);color:#fff">+</div>'+
+        '<div class="nm">empty</div>';
+      d.onclick=()=>{ if(sel!==null&&P(sel).status==="bench"){ const b=P(sel); b.status="field"; b.slot=i; sel=null; save(); renderGame(); renderFair(); } };
+    }
+    pit.appendChild(d);
+  });
+  const b=$("bench"); b.innerHTML="";
+  const bp=benchPlayers().sort((a,b)=>a.secs-b.secs);
+  $("benchCount").textContent = "("+bp.length+")";
+  if(bp.length===0) b.innerHTML='<div class="small">No bench players. Mark players available in Setup, or they are all on the pitch.</div>';
+  bp.forEach(p=>{
+    const c=document.createElement("div");
+    c.className="bchip"+(sel===p.id?" sel":"");
+    c.innerHTML='<div class="av">'+(p.num!==""?p.num:initials(p.name))+'</div>'+
+      '<div class="bn">'+p.name.split(" ")[0]+'</div><div class="bm">'+fmt(p.secs)+'</div>';
+    c.onclick=()=>tapPlayer(p.id);
+    b.appendChild(c);
+  });
+  renderBanner();
+}
+function renderBanner(){
+  const wrap=$("subBanner"); wrap.innerHTML="";
+  const due = state.rotMin>0 && (state.clock-state.lastSubAt)>=state.rotMin*60 && benchPlayers().length>0 && fieldPlayers().length>0;
+  if(due){
+    const s=autoSuggest(false);
+    const div=document.createElement("div");
+    div.className="banner warn";
+    div.innerHTML = s? ("<span>Time to rotate — "+s.in.name.split(" ")[0]+" ON for "+s.out.name.split(" ")[0]+" ("+s.role+")</span>")
+                     : "<span>Time to rotate a player</span>";
+    if(s){const btn=document.createElement("button");btn.className="btn";btn.textContent="Sub";btn.onclick=()=>autoSuggest(true);div.appendChild(btn);}
+    wrap.appendChild(div);
+  }
+}
+function renderFair(){
+  const f=$("fairness"); f.innerHTML="";
+  const ps=availPlayers().slice().sort((a,b)=>a.secs-b.secs);
+  const max=Math.max(60,...ps.map(p=>p.secs));
+  const avg = ps.length? ps.reduce((s,p)=>s+p.secs,0)/ps.length : 0;
+  ps.forEach(p=>{
+    const pct=Math.round(p.secs/max*100);
+    const cls = p.secs < avg*0.7 ? "low" : (p.secs < avg*0.95? "mid":"");
+    const onF = p.status==="field";
+    const row=document.createElement("div");
+    row.className="fbar";
+    row.innerHTML='<div class="lab">'+(onF?"🟢 ":"")+p.name.split(" ")[0]+'</div>'+
+      '<div class="track"><div class="fill '+cls+'" style="width:'+pct+'%"></div></div>'+
+      '<div class="fval">'+fmt(p.secs)+'</div>';
+    f.appendChild(row);
+  });
+  $("fairHint").textContent = ps.length? ("Average so far: "+fmt(Math.round(avg))+". Red = well below average (get them on), green dot = on the pitch now.") : "Mark players available in Setup.";
+}
+function renderSetup(){
+  const fs=$("formationSel");
+  if(fs.options.length===0){
+    Object.keys(FORMATIONS).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k+"  ("+FORMATIONS[k].def+" def, "+FORMATIONS[k].mid+" mid, "+FORMATIONS[k].fwd+" fwd)";fs.appendChild(o);});
+  }
+  fs.value=state.formation;
+  $("halfLen").value=state.halfLen; $("rotMin").value=state.rotMin;
+  const r=$("roster"); r.innerHTML="";
+  state.players.forEach(p=>{
+    const row=document.createElement("div"); row.className="prow";
+    const av='<div class="avatar">'+(p.num!==""?p.num:initials(p.name))+'</div>';
+    const prefLab={ANY:"Any",GK:"GK",DEF:"Def",MID:"Mid",FWD:"Fwd"}[p.pref];
+    row.innerHTML = av +
+      '<div class="grow" onclick="openEdit('+p.id+')">'+
+         '<div class="pname">'+p.name+'</div>'+
+         '<div class="pmeta"><span class="pref-pill">'+prefLab+'</span> '+(p.num!==""?("#"+p.num):"no number")+' · tap to edit</div>'+
+       '</div>';
+    const t=document.createElement("div");
+    t.className="toggle"+(p.available?" on":"");
+    t.innerHTML='<div class="knob"></div>';
+    t.onclick=()=>toggleAvail(p.id);
+    row.appendChild(t);
+    r.appendChild(row);
+  });
+  $("availCount").textContent = availPlayers().length+" available";
+}
+function updateLiveNumbers(){
+  $("clockDisp").textContent=fmt(state.clock);
+  const over=state.clock>=state.halfLen*60;
+  $("clockDisp").style.color=over?"var(--red)":"";
+  $("clockSub").textContent="Half length "+fmt(state.halfLen*60)+(over?" · TIME UP":"");
+  $("halfBadge").textContent="Half "+state.half+" · running";
+  renderGame(); renderFair();
+}
+window.onload=()=>{
+  if(state.running){ timer=setInterval(tick,1000); }
+  renderAll();
+};
+</script>
+</body>
+</html>
