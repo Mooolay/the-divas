@@ -316,7 +316,7 @@ function newGame(){return {period:1,elapsed:0,running:false,refMs:0,lastSubAt:0,
 function newTeam(id,name,players){return {id:id,name:name,color:"#d12f2f",players:players,formation:"2-3-1",halfLen:25,periods:2,rotMin:6,subsPer:"all",vibrate:true,keepAwake:true,savedLineups:[],game:newGame()};}
 function defaultState(){
   const ps=ROSTER.map((n,i)=>newPlayer(i,n,DEFNUM[n]));
-  const t=newTeam("t1","Baywide Chickens",ps);
+  const t=newTeam("t1","Divas",ps);
   return {v:3,teams:{t1:t},current:"t1"};
 }
 function load(){
@@ -324,7 +324,7 @@ function load(){
   // migrate v2 single-team
   try{const o=JSON.parse(localStorage.getItem("subsmgr_v2"));if(o&&Array.isArray(o.players)&&o.players.length){
     o.players.forEach(migrateP);
-    const t=newTeam("t1","Baywide Chickens",o.players);
+    const t=newTeam("t1","Divas",o.players);
     t.formation=o.formation||"2-3-1";t.halfLen=o.halfLen||25;t.rotMin=o.rotMin||6;t.subsPer=o.subsPer||"all";t.vibrate=o.vibrate!==false;
     return {v:3,teams:{t1:t},current:"t1"};
   }}catch(e){}
