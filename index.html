@@ -3,13 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d12f2f">
 <title>Team Subs Manager</title>
 <style>
-  :root{ --red:#d12f2f; --red-d:#b02525; --bg:#f4f5f7; --card:#fff; --ink:#1c1c1e; --muted:#7a7a82; --line:#e6e6ea; --grass:#3aa45b; --grass-d:#2f8c4d; --gold:#f4c430; --blue:#2f6fd1; }
+  :root{
+    --red:#d12f2f; --red-d:#b02525; --bg:#f4f5f7; --card:#fff;
+    --ink:#1c1c1e; --muted:#7a7a82; --line:#e6e6ea;
+    --grass:#3aa45b; --grass-d:#2f8c4d; --gold:#f4c430; --blue:#2f6fd1;
+  }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;}
-  header{background:var(--red);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 6px rgba(0,0,0,.15);}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);font-size:16px;-webkit-text-size-adjust:100%;}
+  header{background:var(--red);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:20;
+    display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 6px rgba(0,0,0,.15);}
   header h1{font-size:18px;margin:0;font-weight:700;}
   header .sub{font-size:12px;opacity:.85;font-weight:400;}
   .wrap{max-width:560px;margin:0 auto;padding:14px 14px 90px;}
@@ -24,19 +33,18 @@
   .btn-row > button{flex:1;}
   label.fld{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px;font-weight:600;}
   select,input[type=number],input[type=text]{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:#fff;font-family:inherit;}
-  .tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:20;}
+  .tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom);}
   .tabs button{flex:1;background:none;color:var(--muted);font-size:11px;font-weight:600;padding:8px 2px;border-radius:0;display:flex;flex-direction:column;align-items:center;gap:3px;}
   .tabs button .ic{font-size:20px;line-height:1;}
   .tabs button.active{color:var(--red);}
-  .screen{display:none;}
-  .screen.active{display:block;}
+  .screen{display:none;} .screen.active{display:block;}
   .prow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
   .prow:last-child{border-bottom:none;}
   .avatar{width:38px;height:38px;border-radius:50%;background:#d9d9de;color:#555;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
   .pname{font-weight:600;font-size:15px;}
   .pmeta{font-size:12px;color:var(--muted);}
   .grow{flex:1;min-width:0;}
-  .pref-pill{font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:#eef;color:#3340a0;}
+  .rate-pill{font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:#eef;color:#3340a0;font-variant-numeric:tabular-nums;}
   .toggle{width:50px;height:30px;border-radius:30px;background:#d2d2d8;position:relative;transition:.15s;flex-shrink:0;}
   .toggle.on{background:var(--grass);}
   .toggle .knob{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.3);}
@@ -46,79 +54,101 @@
   .pitch .line{position:absolute;left:5%;right:5%;height:2px;background:rgba(255,255,255,.55);top:50%;}
   .pitch .circle{position:absolute;left:50%;top:50%;width:70px;height:70px;border:2px solid rgba(255,255,255,.55);border-radius:50%;transform:translate(-50%,-50%);}
   .pitch .box{position:absolute;left:25%;right:25%;height:13%;border:2px solid rgba(255,255,255,.5);}
-  .pitch .box.top{top:0;border-top:none;}
-  .pitch .box.bot{bottom:0;border-bottom:none;}
+  .pitch .box.top{top:0;border-top:none;} .pitch .box.bot{bottom:0;border-bottom:none;}
   .slot{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;width:74px;}
   .chip{width:50px;height:50px;border-radius:50%;background:#fff;border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--ink);box-shadow:0 2px 5px rgba(0,0,0,.35);}
   .chip.gk{border-color:#222;background:#ffd54a;}
   .chip.sel{border-color:var(--blue);box-shadow:0 0 0 4px rgba(47,111,209,.5);}
+  .chip.off{border-color:var(--red);box-shadow:0 0 0 4px rgba(209,47,47,.45);}
   .slot .nm{font-size:11px;color:#fff;font-weight:700;margin-top:3px;text-shadow:0 1px 2px rgba(0,0,0,.7);text-align:center;line-height:1.1;max-width:74px;}
   .slot .mins{font-size:10px;color:#fff;background:rgba(0,0,0,.35);border-radius:8px;padding:0 5px;margin-top:2px;}
-  .slot .role{font-size:9px;color:#fff;opacity:.8;font-weight:700;letter-spacing:.05em;}
+  .slot .role{font-size:9px;color:#fff;opacity:.85;font-weight:700;letter-spacing:.05em;}
   .bench{display:flex;flex-wrap:wrap;gap:8px;}
   .bchip{display:flex;flex-direction:column;align-items:center;width:64px;padding:6px 2px;border:1px solid var(--line);border-radius:10px;background:#fff;}
   .bchip .av{width:40px;height:40px;border-radius:50%;background:#e9e9ee;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
   .bchip.sel{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,209,.35);}
+  .bchip.on{border-color:var(--grass);box-shadow:0 0 0 3px rgba(58,164,91,.4);}
   .bchip .bn{font-size:11px;font-weight:600;margin-top:3px;text-align:center;line-height:1.05;}
   .bchip .bm{font-size:10px;color:var(--muted);}
   .clockcard{text-align:center;}
   .clock{font-size:52px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px;line-height:1;}
   .half-badge{display:inline-block;background:var(--ink);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:6px;}
-  .banner{background:var(--gold);color:#3a2f00;border-radius:10px;padding:10px 12px;font-weight:600;font-size:14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
-  .banner.warn{background:#ffe08a;}
-  .banner button{padding:7px 12px;font-size:13px;}
+  .planbox{border:2px solid var(--grass);border-radius:14px;padding:12px;margin-bottom:14px;background:#f3fbf5;}
+  .planbox.due{border-color:var(--gold);background:#fffbeb;}
+  .planhead{font-weight:800;font-size:15px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+  .pair{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:10px;background:#fff;border:1px solid var(--line);margin-bottom:6px;font-size:15px;}
+  .pair .on{font-weight:800;color:var(--grass-d);}
+  .pair .arrow{color:var(--muted);font-weight:700;font-size:12px;}
+  .pair .off{font-weight:700;}
+  .pair .rl{margin-left:auto;font-size:11px;font-weight:700;color:#fff;background:var(--blue);border-radius:8px;padding:2px 7px;}
   .fbar{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);}
   .fbar:last-child{border-bottom:none;}
   .fbar .lab{width:96px;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .track{flex:1;height:16px;background:#eee;border-radius:8px;overflow:hidden;}
   .fill{height:100%;background:var(--grass);border-radius:8px;}
-  .fill.low{background:var(--red);}
-  .fill.mid{background:var(--gold);}
+  .fill.low{background:var(--red);} .fill.mid{background:var(--gold);}
   .fval{width:52px;text-align:right;font-size:13px;font-variant-numeric:tabular-nums;font-weight:600;}
   .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4;}
   .center{text-align:center;}
-  dialog{border:none;border-radius:14px;padding:0;max-width:90%;width:340px;}
+  dialog{border:none;border-radius:14px;padding:0;max-width:92%;width:360px;}
   dialog::backdrop{background:rgba(0,0,0,.4);}
   .dlg{padding:16px;}
-  .dlg h3{margin:0 0 10px;font-size:16px;}
+  .dlg h3{margin:0 0 4px;font-size:17px;}
+  .raterow{display:flex;align-items:center;gap:6px;margin:8px 0;}
+  .raterow .rlab{width:78px;font-size:13px;font-weight:700;}
+  .seg{display:flex;gap:5px;flex:1;}
+  .seg button{flex:1;padding:8px 0;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:9px;}
+  .seg button.sel{background:var(--blue);color:#fff;border-color:var(--blue);}
 </style>
 </head>
 <body>
 <header>
   <div>
-    <h1 id="teamTitle">The Divas</h1>
-    <div class="sub" id="hdrSub">7-a-side &middot; 2 halves</div>
+    <h1>Team Subs</h1>
+    <div class="sub" id="hdrSub">7-a-side · 2 halves</div>
   </div>
   <button class="btn-ghost" style="padding:7px 11px;font-size:13px" onclick="resetGamePrompt()">Reset game</button>
 </header>
+
 <div class="wrap">
+
+  <!-- ============ GAME ============ -->
   <div class="screen active" id="s-game">
     <div class="card clockcard">
       <div class="half-badge" id="halfBadge">Not started</div>
       <div class="clock" id="clockDisp">00:00</div>
-      <div class="small" id="clockSub">Half length: 25:00</div>
+      <div class="small" id="clockSub">Half length 25:00</div>
       <div class="btn-row" style="margin-top:12px">
-        <button class="btn-grass" id="startBtn" onclick="toggleClock()">&#9654; Start</button>
-        <button class="btn-ghost" onclick="nextHalf()">&#9197; Next half</button>
+        <button class="btn-grass" id="startBtn" onclick="toggleClock()">▶ Start</button>
+        <button class="btn-ghost" onclick="nextHalf()">⏭ Next half</button>
       </div>
     </div>
-    <div id="subBanner"></div>
+
+    <div id="planArea"></div>
+
+    <div class="card">
+      <div class="btn-row">
+        <button class="btn" onclick="planNow()">🔄 Plan subs now</button>
+        <button class="btn-ghost" onclick="swapKeeper()">🧤 Swap keeper</button>
+      </div>
+      <div class="hint" id="rotHint"></div>
+    </div>
+
     <div class="card">
       <h2>On the pitch</h2>
       <div class="pitch" id="pitch"></div>
-      <div class="hint">Tap a player to select, then tap another to swap them. Tap a pitch player then a bench player to sub.</div>
+      <div class="hint">Green ring = coming ON · red ring = coming OFF. Tap a player then another to swap manually.</div>
     </div>
+
     <div class="card">
-      <h2><span>Bench <span class="small" id="benchCount"></span></span></h2>
+      <h2 style="display:flex;justify-content:space-between;align-items:center">
+        <span>Bench <span class="small" id="benchCount"></span></span>
+      </h2>
       <div class="bench" id="bench"></div>
     </div>
-    <div class="card">
-      <div class="btn-row">
-        <button class="btn" onclick="autoSuggest(true)">Suggest a sub</button>
-        <button class="btn-ghost" onclick="swapKeeper()">Swap keeper</button>
-      </div>
-    </div>
   </div>
+
+  <!-- ============ FAIR PLAY ============ -->
   <div class="screen" id="s-time">
     <div class="card">
       <h2>Minutes played today</h2>
@@ -126,54 +156,68 @@
       <div class="hint" id="fairHint"></div>
     </div>
   </div>
+
+  <!-- ============ SETUP ============ -->
   <div class="screen" id="s-setup">
     <div class="card">
       <h2>Match settings</h2>
       <label class="fld">Formation (6 outfield + keeper)</label>
       <select id="formationSel" onchange="changeFormation()"></select>
       <label class="fld">Half length (minutes)</label>
-      <input type="number" id="halfLen" min="1" max="45" value="25" onchange="saveSettings();renderClock()">
-      <label class="fld">Suggest a sub every (minutes)</label>
-      <input type="number" id="rotMin" min="1" max="20" value="5" onchange="saveSettings()">
+      <input type="number" id="halfLen" min="1" max="45" step="0.5" value="25" onchange="saveSettings();renderClock()">
+      <label class="fld">Rotate subs every (minutes)</label>
+      <input type="number" id="rotMin" min="0" max="20" step="0.5" value="6.5" onchange="saveSettings();renderGame()">
+      <label class="fld">How many to sub each rotation</label>
+      <select id="subsPer" onchange="saveSettings();renderGame()">
+        <option value="1">1 at a time</option>
+        <option value="2">2 at a time</option>
+        <option value="3">3 at a time</option>
+        <option value="4">4 at a time</option>
+        <option value="all">Whole bench (roll everyone)</option>
+      </select>
       <div class="btn-row" style="margin-top:14px">
-        <button class="btn-grass" onclick="autoLineup()">Auto-fill best lineup</button>
+        <button class="btn-grass" onclick="autoLineup()">✨ Auto-fill best lineup</button>
         <button class="btn-ghost" onclick="benchAll()">Clear pitch</button>
       </div>
-      <div class="hint">Auto-fill places your available players by preferred position and gives priority to whoever has played the least so far today.</div>
+      <div class="hint">Auto-fill puts players in positions that match their ratings, and gives the spots to whoever has played least so far.</div>
     </div>
+
     <div class="card">
-      <h2><span>Squad &mdash; tap to mark available</span> <span class="small" id="availCount"></span></h2>
+      <h2 style="display:flex;justify-content:space-between;align-items:center">
+        <span>Squad — tap a name to set ratings</span>
+        <span class="small" id="availCount"></span>
+      </h2>
+      <div class="hint" style="margin-top:0;margin-bottom:6px">Toggle = available today. Pills show ratings: G goal · D def · M mid · A attack (1–3).</div>
       <div id="roster"></div>
     </div>
     <div class="card center">
       <button class="btn-ghost" onclick="resetSeasonPrompt()">Reset all saved settings</button>
-      <div class="hint">Clears jersey numbers, preferred positions and today's minutes.</div>
+      <div class="hint">Clears numbers, ratings and today's minutes.</div>
     </div>
   </div>
+
 </div>
+
 <div class="tabs">
-  <button class="active" data-s="game" onclick="showScreen('game')"><span class="ic">&#9917;</span>Game</button>
-  <button data-s="time" onclick="showScreen('time')"><span class="ic">&#9201;</span>Fair play</button>
-  <button data-s="setup" onclick="showScreen('setup')"><span class="ic">&#9881;</span>Setup</button>
+  <button class="active" data-s="game" onclick="showScreen('game')"><span class="ic">⚽</span>Game</button>
+  <button data-s="time" onclick="showScreen('time')"><span class="ic">⏱️</span>Fair play</button>
+  <button data-s="setup" onclick="showScreen('setup')"><span class="ic">⚙️</span>Setup</button>
 </div>
+
 <dialog id="editDlg"><div class="dlg">
   <h3 id="edName">Player</h3>
+  <div class="small" style="margin-bottom:8px">Rate 1 (fine there) to 3 (best spot).</div>
   <label class="fld">Jersey number</label>
   <input type="number" id="edNum" min="0" max="99">
-  <label class="fld">Preferred position</label>
-  <select id="edPref">
-    <option value="ANY">Anywhere</option>
-    <option value="GK">Goalkeeper</option>
-    <option value="DEF">Defender</option>
-    <option value="MID">Midfield</option>
-    <option value="FWD">Forward / Striker</option>
-  </select>
+  <div id="rateRows"></div>
   <div class="btn-row" style="margin-top:14px">
     <button class="btn" onclick="saveEdit()">Save</button>
     <button class="btn-ghost" onclick="document.getElementById('editDlg').close()">Cancel</button>
   </div>
 </div></dialog>
+
 <script>
+/* ---------------- data ---------------- */
 const ROSTER = [
   "Charlotte Lawrance","Kiera Hohneck","Lydia Shan","Mackenzie Clouston",
   "Madison Gibney","Nieve McLay","Olivia Calkin","Renn Foster",
@@ -181,38 +225,66 @@ const ROSTER = [
 ];
 const DEFNUM = {"Nieve McLay":7,"Olivia Calkin":10};
 const FORMATIONS = {
-  "2-3-1": {def:2,mid:3,fwd:1},
-  "3-2-1": {def:3,mid:2,fwd:1},
-  "2-2-2": {def:2,mid:2,fwd:2},
-  "3-3":   {def:3,mid:3,fwd:0},
-  "1-3-2": {def:1,mid:3,fwd:2}
+  "2-3-1":{def:2,mid:3,fwd:1}, "3-2-1":{def:3,mid:2,fwd:1},
+  "2-2-2":{def:2,mid:2,fwd:2}, "3-3":{def:3,mid:3,fwd:0}, "1-3-2":{def:1,mid:3,fwd:2}
 };
-const LS = "subsmgr_divas_v1";
-let state = load();
+const LINES=[["GK","Goal"],["DEF","Defence"],["MID","Midfield"],["FWD","Attack"]];
+const LS="subsmgr_v2";
+let state=load();
+let plan=null;        // [{inId,outId,role}]
+let sel=null;         // manual selection
+let editId=null, tmpRate=null;
+
 function freshPlayers(){
   return ROSTER.map((n,i)=>({
-    id:i, name:n, num:DEFNUM[n]??"", pref:"ANY",
-    available:true, status:"bench", slot:null, secs:0
+    id:i,name:n,num:DEFNUM[n]??"",
+    rate:{GK:1,DEF:2,MID:2,FWD:2},
+    available:true,status:"bench",slot:null,secs:0
   }));
 }
 function defaultState(){
-  return { players:freshPlayers(), formation:"2-3-1", halfLen:25, rotMin:5, half:1, clock:0, running:false, lastSubAt:0 };
+  return {players:freshPlayers(),formation:"2-3-1",halfLen:25,rotMin:6.5,subsPer:"all",
+    half:1,clock:0,running:false,lastSubAt:0};
 }
 function load(){
-  try{ const s=JSON.parse(localStorage.getItem(LS)); if(s&&s.players&&s.players.length===ROSTER.length) return s; }catch(e){}
+  try{
+    const s=JSON.parse(localStorage.getItem(LS));
+    if(s&&s.players&&s.players.length===ROSTER.length){ s.players.forEach(migrate); return s; }
+  }catch(e){}
+  try{
+    const o=JSON.parse(localStorage.getItem("subsmgr_v1"));
+    if(o&&o.players&&o.players.length===ROSTER.length){
+      o.players.forEach(migrate);
+      o.subsPer=o.subsPer||"all"; o.rotMin=o.rotMin||6.5;
+      return o;
+    }
+  }catch(e){}
   return defaultState();
 }
+function migrate(p){
+  if(!p.rate){
+    const m={ANY:{GK:1,DEF:2,MID:2,FWD:2},GK:{GK:3,DEF:1,MID:1,FWD:1},
+      DEF:{GK:1,DEF:3,MID:1,FWD:1},MID:{GK:1,DEF:1,MID:3,FWD:1},FWD:{GK:1,DEF:1,MID:1,FWD:3}};
+    p.rate=m[p.pref]||{GK:1,DEF:2,MID:2,FWD:2};
+    delete p.pref;
+  }
+  ["GK","DEF","MID","FWD"].forEach(k=>{if(!p.rate[k]||p.rate[k]<1)p.rate[k]=1;});
+}
 function save(){ try{ localStorage.setItem(LS,JSON.stringify(state)); }catch(e){} }
+
+/* ---------------- helpers ---------------- */
 const $=id=>document.getElementById(id);
 function initials(n){const p=n.trim().split(/\s+/);return (p[0][0]+(p[1]?p[1][0]:"")).toUpperCase();}
+function first(n){return n.split(" ")[0];}
 function fmt(s){const m=Math.floor(s/60),x=s%60;return String(m).padStart(2,"0")+":"+String(x).padStart(2,"0");}
 function P(id){return state.players.find(p=>p.id===id);}
 function fieldPlayers(){return state.players.filter(p=>p.status==="field");}
 function benchPlayers(){return state.players.filter(p=>p.status==="bench"&&p.available);}
 function availPlayers(){return state.players.filter(p=>p.available);}
+function rate(p,r){return (p.rate&&p.rate[r])||0;}
+
 function slots(){
-  const f=FORMATIONS[state.formation];
-  const arr=[{role:"GK"}];
+  const f=FORMATIONS[state.formation];const arr=[{role:"GK"}];
   for(let i=0;i<f.def;i++)arr.push({role:"DEF"});
   for(let i=0;i<f.mid;i++)arr.push({role:"MID"});
   for(let i=0;i<f.fwd;i++)arr.push({role:"FWD"});
@@ -220,264 +292,297 @@ function slots(){
 }
 function slotRole(i){return slots()[i]?.role||"MID";}
 function slotXY(){
-  const f=FORMATIONS[state.formation], out=[];
-  out.push([50,90]);
-  const rows=[["DEF",f.def,74],["MID",f.mid,50],["FWD",f.fwd,26]];
-  rows.forEach(([role,n,y])=>{
-    for(let i=0;i<n;i++){
-      const x = n===1?50: 18 + (64*i/(n-1));
-      out.push([x,y]);
-    }
+  const f=FORMATIONS[state.formation],out=[[50,90]];
+  [["DEF",f.def,74],["MID",f.mid,50],["FWD",f.fwd,26]].forEach(([r,n,y])=>{
+    for(let i=0;i<n;i++){const x=n===1?50:18+(64*i/(n-1));out.push([x,y]);}
   });
   return out;
 }
+function rotSec(){return Math.round((state.rotMin||0)*60);}
+function effCount(){const b=benchPlayers().length;return state.subsPer==="all"?b:Math.min(parseInt(state.subsPer),b);}
+
+/* ---------------- screens ---------------- */
 function showScreen(s){
   document.querySelectorAll(".screen").forEach(e=>e.classList.remove("active"));
   $("s-"+s).classList.add("active");
   document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.s===s));
   renderAll();
 }
-let sel=null;
+
+/* ---------------- manual swap ---------------- */
 function tapPlayer(id){
   const p=P(id);
-  if(sel===null){ sel=id; renderGame(); return; }
-  if(sel===id){ sel=null; renderGame(); return; }
-  const a=P(sel), b=p;
-  if(a.status==="field"&&b.status==="field"){
-    const t=a.slot; a.slot=b.slot; b.slot=t;
-  } else if(a.status==="field"&&b.status==="bench"){
-    subIn(b.id,a.id);
-  } else if(a.status==="bench"&&b.status==="field"){
-    subIn(a.id,b.id);
-  } else { sel=id; renderGame(); return; }
-  sel=null; save(); renderGame(); renderFair();
+  if(sel===null){sel=id;renderGame();return;}
+  if(sel===id){sel=null;renderGame();return;}
+  const a=P(sel),b=p;
+  if(a.status==="field"&&b.status==="field"){const t=a.slot;a.slot=b.slot;b.slot=t;}
+  else if(a.status==="field"&&b.status==="bench"){subIn(b.id,a.id);}
+  else if(a.status==="bench"&&b.status==="field"){subIn(a.id,b.id);}
+  else {sel=id;renderGame();return;}
+  sel=null;save();renderGame();renderFair();
 }
 function subIn(inId,outId){
-  const ip=P(inId), op=P(outId);
-  ip.status="field"; ip.slot=op.slot;
-  op.status="bench"; op.slot=null;
+  const ip=P(inId),op=P(outId);
+  ip.status="field";ip.slot=op.slot;op.status="bench";op.slot=null;
   state.lastSubAt=state.clock;
 }
+
+/* ---------------- clock ---------------- */
 let timer=null;
 function toggleClock(){
   state.running=!state.running;
-  if(state.running){ if(!timer) timer=setInterval(tick,1000); }
-  save(); renderClock();
+  if(state.running&&!timer)timer=setInterval(tick,1000);
+  save();renderClock();
 }
 function tick(){
-  if(!state.running) return;
+  if(!state.running)return;
   state.clock++;
   fieldPlayers().forEach(p=>p.secs++);
-  updateLiveNumbers();
-  if(state.clock % 5 === 0) save();
+  if(!plan && rotSec()>0 && (state.clock-state.lastSubAt)>=rotSec() && benchPlayers().length>0 && fieldPlayers().some(p=>slotRole(p.slot)!=="GK")){
+    makePlan();
+  }
+  updateLive();
+  if(state.clock%5===0)save();
 }
 function nextHalf(){
-  state.half = state.half>=2?2:state.half+1;
-  state.clock=0; state.lastSubAt=0; state.running=false;
-  save(); renderClock(); renderGame();
-  if(state.half===2) setTimeout(()=>alert("Second half — remember to swap your keeper if you planned to. Tap Swap keeper."),50);
+  state.half=state.half>=2?2:state.half+1;
+  state.clock=0;state.lastSubAt=0;state.running=false;plan=null;
+  save();renderAll();
+  if(state.half===2)setTimeout(()=>alert("Second half — swap your keeper if planned. Tap the Swap keeper button."),50);
 }
 function resetGamePrompt(){
-  if(confirm("Reset the clock and all minutes for today? (Squad, numbers and positions are kept.)")){
+  if(confirm("Reset the clock and all minutes for today? (Squad, numbers and ratings are kept.)")){
     state.players.forEach(p=>{p.secs=0;p.status=p.available?"bench":"out";p.slot=null;});
-    state.half=1;state.clock=0;state.running=false;state.lastSubAt=0;sel=null;
+    state.half=1;state.clock=0;state.running=false;state.lastSubAt=0;sel=null;plan=null;
     save();renderAll();showScreen('setup');
   }
 }
 function resetSeasonPrompt(){
-  if(confirm("Reset EVERYTHING to defaults? Clears numbers, preferred positions and minutes.")){
-    state=defaultState();save();renderAll();
+  if(confirm("Reset EVERYTHING to defaults? Clears numbers, ratings and minutes.")){
+    state=defaultState();plan=null;save();renderAll();
   }
 }
+
+/* ---------------- lineup ---------------- */
 function autoLineup(){
   const sl=slots();
   state.players.forEach(p=>{if(p.status==="field"){p.status="bench";p.slot=null;}});
-  const pool=availPlayers().slice().sort((a,b)=>a.secs-b.secs);
-  const used=new Set();
+  const pool=availPlayers();const used=new Set();
   sl.forEach((s,i)=>{
-    let pick = pool.find(p=>!used.has(p.id)&&p.pref===s.role)
-            || pool.find(p=>!used.has(p.id)&&p.pref==="ANY")
-            || pool.find(p=>!used.has(p.id));
-    if(pick){ pick.status="field"; pick.slot=i; used.add(pick.id); }
+    let best=null,bs=-1e9;
+    pool.forEach(p=>{if(used.has(p.id))return;const sc=rate(p,s.role)*1000-p.secs;if(sc>bs){bs=sc;best=p;}});
+    if(best){best.status="field";best.slot=i;used.add(best.id);}
   });
-  state.players.forEach(p=>{if(p.available&&!used.has(p.id)){p.status="bench";} });
-  save();renderAll();showScreen('game');
+  state.players.forEach(p=>{if(p.available&&!used.has(p.id))p.status="bench";});
+  plan=null;save();renderAll();showScreen('game');
 }
 function benchAll(){
   state.players.forEach(p=>{if(p.status==="field"){p.status="bench";p.slot=null;}});
-  save();renderAll();
+  plan=null;save();renderAll();
 }
-function autoSuggest(apply){
-  const outC = fieldPlayers().filter(p=>slotRole(p.slot)!=="GK").sort((a,b)=>b.secs-a.secs)[0];
-  const bench = benchPlayers();
-  if(!outC || bench.length===0){ if(apply) alert("No bench players available to sub on."); return null; }
-  const role = slotRole(outC.slot);
-  let inC = bench.filter(p=>p.pref===role).sort((a,b)=>a.secs-b.secs)[0]
-        || bench.filter(p=>p.pref==="ANY").sort((a,b)=>a.secs-b.secs)[0]
-        || bench.slice().sort((a,b)=>a.secs-b.secs)[0];
-  if(apply){ subIn(inC.id,outC.id); save(); renderGame(); renderFair(); return null; }
-  return {out:outC,in:inC,role};
+
+/* ---------------- rotation plan (block subs) ---------------- */
+function roleRank(r){return r==="DEF"?0:r==="FWD"?1:2;}
+function makePlan(){
+  let out=fieldPlayers().filter(p=>slotRole(p.slot)!=="GK").sort((a,b)=>b.secs-a.secs);
+  let inb=benchPlayers().slice().sort((a,b)=>a.secs-b.secs);
+  let n=Math.min(effCount(),out.length,inb.length);
+  if(n<=0){plan=null;return;}
+  out=out.slice(0,n);
+  let avail=inb.slice(0,n);
+  let order=out.slice().sort((a,b)=>roleRank(slotRole(a.slot))-roleRank(slotRole(b.slot)));
+  let pairs=[];
+  order.forEach(op=>{
+    const role=slotRole(op.slot);
+    avail.sort((x,y)=>(rate(y,role)-rate(x,role))||(x.secs-y.secs));
+    const ip=avail.shift();
+    if(ip)pairs.push({inId:ip.id,outId:op.id,role});
+  });
+  plan=pairs;
+}
+function planNow(){makePlan();renderGame();}
+function cancelPlan(){plan=null;renderGame();}
+function applyPlan(){
+  if(!plan)return;
+  plan.forEach(pr=>{const ip=P(pr.inId),op=P(pr.outId);
+    if(ip&&op&&ip.status==="bench"&&op.status==="field")subIn(ip.id,op.id);});
+  state.lastSubAt=state.clock;plan=null;save();renderGame();renderFair();
 }
 function swapKeeper(){
-  const gk = fieldPlayers().find(p=>slotRole(p.slot)==="GK");
-  const bench = benchPlayers();
-  if(!gk){ alert("No keeper currently on the pitch."); return; }
-  let inC = bench.filter(p=>p.pref==="GK").sort((a,b)=>a.secs-b.secs)[0]
-        || bench.slice().sort((a,b)=>a.secs-b.secs)[0];
-  if(!inC){ alert("No bench player to put in goal."); return; }
-  if(confirm("Put "+inC.name+" in goal for "+gk.name+"?")){
-    subIn(inC.id,gk.id); save(); renderGame(); renderFair();
-  }
+  const gk=fieldPlayers().find(p=>slotRole(p.slot)==="GK");
+  const bench=benchPlayers();
+  if(!gk){alert("No keeper on the pitch.");return;}
+  let inC=bench.slice().sort((a,b)=>(rate(b,"GK")-rate(a,"GK"))||(a.secs-b.secs))[0];
+  if(!inC){alert("No bench player to put in goal.");return;}
+  if(confirm("Put "+inC.name+" in goal for "+gk.name+"?")){subIn(inC.id,gk.id);save();renderGame();renderFair();}
 }
-let editId=null;
+
+/* ---------------- editing ---------------- */
 function openEdit(id){
-  editId=id; const p=P(id);
-  $("edName").textContent=p.name;
-  $("edNum").value=p.num; $("edPref").value=p.pref;
-  $("editDlg").showModal();
+  editId=id;const p=P(id);tmpRate={...p.rate};
+  $("edName").textContent=p.name;$("edNum").value=p.num;
+  renderRateRows();$("editDlg").showModal();
 }
+function renderRateRows(){
+  const c=$("rateRows");c.innerHTML="";
+  LINES.forEach(([k,lab])=>{
+    const row=document.createElement("div");row.className="raterow";
+    let segs="";for(let v=1;v<=3;v++){segs+='<button class="'+(tmpRate[k]===v?'sel':'')+'" onclick="setRate(\''+k+'\','+v+')">'+v+'</button>';}
+    row.innerHTML='<div class="rlab">'+lab+'</div><div class="seg">'+segs+'</div>';
+    c.appendChild(row);
+  });
+}
+function setRate(k,v){tmpRate[k]=v;renderRateRows();}
 function saveEdit(){
-  const p=P(editId);
-  p.num = $("edNum").value===""?"":parseInt($("edNum").value);
-  p.pref = $("edPref").value;
-  $("editDlg").close(); save(); renderAll();
+  const p=P(editId);p.rate={...tmpRate};
+  p.num=$("edNum").value===""?"":parseInt($("edNum").value);
+  $("editDlg").close();save();renderAll();
 }
 function toggleAvail(id){
-  const p=P(id); p.available=!p.available;
-  if(!p.available){ p.status="out"; p.slot=null; }
-  else if(p.status==="out"){ p.status="bench"; }
-  save(); renderAll();
+  const p=P(id);p.available=!p.available;
+  if(!p.available){p.status="out";p.slot=null;}else if(p.status==="out")p.status="bench";
+  plan=null;save();renderAll();
 }
+
+/* ---------------- settings ---------------- */
 function changeFormation(){
   state.formation=$("formationSel").value;
   const n=slots().length;
   state.players.forEach(p=>{if(p.status==="field"&&p.slot>=n){p.status="bench";p.slot=null;}});
-  save(); renderAll();
+  plan=null;save();renderAll();
 }
 function saveSettings(){
-  state.halfLen=Math.max(1,parseInt($("halfLen").value)||25);
-  state.rotMin=Math.max(0,parseInt($("rotMin").value)||0);
+  state.halfLen=Math.max(1,parseFloat($("halfLen").value)||25);
+  state.rotMin=Math.max(0,parseFloat($("rotMin").value)||0);
+  state.subsPer=$("subsPer").value;
   save();
 }
+
+/* ---------------- render ---------------- */
 function renderAll(){renderClock();renderGame();renderFair();renderSetup();}
 function renderClock(){
-  $("halfBadge").textContent = state.running? ("Half "+state.half+" · running")
-       : (state.clock>0? ("Half "+state.half+" · paused") : "Not started");
-  $("clockDisp").textContent = fmt(state.clock);
-  const over = state.clock >= state.halfLen*60;
-  $("clockDisp").style.color = over? "var(--red)":"";
-  $("clockSub").textContent = ("Half length "+fmt(state.halfLen*60)) + (over? " · TIME UP":"");
-  $("startBtn").textContent = state.running? "Pause":"Start";
-  $("startBtn").className = state.running? "btn":"btn-grass";
-  $("hdrSub").textContent = "7-a-side · "+state.formation+" · 2 halves";
-}
-function renderGame(){
-  const pit=$("pitch");
-  pit.innerHTML = '<div class="line"></div><div class="circle"></div><div class="box top"></div><div class="box bot"></div>';
-  const xy=slotXY(), sl=slots();
-  sl.forEach((s,i)=>{
-    const [x,y]=xy[i];
-    const pl=fieldPlayers().find(p=>p.slot===i);
-    const d=document.createElement("div");
-    d.className="slot"; d.style.left=x+"%"; d.style.top=y+"%";
-    const isGK=s.role==="GK";
-    if(pl){
-      d.innerHTML='<div class="role">'+(isGK?"GK":s.role)+'</div>'+
-        '<div class="chip '+(isGK?"gk":"")+' '+(sel===pl.id?"sel":"")+'">'+(pl.num!==""?pl.num:initials(pl.name))+'</div>'+
-        '<div class="nm">'+pl.name.split(" ")[0]+'</div>'+
-        '<div class="mins">'+fmt(pl.secs)+'</div>';
-      d.onclick=()=>tapPlayer(pl.id);
-    } else {
-      d.innerHTML='<div class="role">'+(isGK?"GK":s.role)+'</div>'+
-        '<div class="chip" style="border-style:dashed;border-color:#fff;background:rgba(255,255,255,.25);color:#fff">+</div>'+
-        '<div class="nm">empty</div>';
-      d.onclick=()=>{ if(sel!==null&&P(sel).status==="bench"){ const b=P(sel); b.status="field"; b.slot=i; sel=null; save(); renderGame(); renderFair(); } };
-    }
-    pit.appendChild(d);
-  });
-  const b=$("bench"); b.innerHTML="";
-  const bp=benchPlayers().sort((a,b)=>a.secs-b.secs);
-  $("benchCount").textContent = "("+bp.length+")";
-  if(bp.length===0) b.innerHTML='<div class="small">No bench players. Mark players available in Setup, or they are all on the pitch.</div>';
-  bp.forEach(p=>{
-    const c=document.createElement("div");
-    c.className="bchip"+(sel===p.id?" sel":"");
-    c.innerHTML='<div class="av">'+(p.num!==""?p.num:initials(p.name))+'</div>'+
-      '<div class="bn">'+p.name.split(" ")[0]+'</div><div class="bm">'+fmt(p.secs)+'</div>';
-    c.onclick=()=>tapPlayer(p.id);
-    b.appendChild(c);
-  });
-  renderBanner();
-}
-function renderBanner(){
-  const wrap=$("subBanner"); wrap.innerHTML="";
-  const due = state.rotMin>0 && (state.clock-state.lastSubAt)>=state.rotMin*60 && benchPlayers().length>0 && fieldPlayers().length>0;
-  if(due){
-    const s=autoSuggest(false);
-    const div=document.createElement("div");
-    div.className="banner warn";
-    div.innerHTML = s? ("<span>Time to rotate — "+s.in.name.split(" ")[0]+" ON for "+s.out.name.split(" ")[0]+" ("+s.role+")</span>")
-                     : "<span>Time to rotate a player</span>";
-    if(s){const btn=document.createElement("button");btn.className="btn";btn.textContent="Sub";btn.onclick=()=>autoSuggest(true);div.appendChild(btn);}
-    wrap.appendChild(div);
-  }
-}
-function renderFair(){
-  const f=$("fairness"); f.innerHTML="";
-  const ps=availPlayers().slice().sort((a,b)=>a.secs-b.secs);
-  const max=Math.max(60,...ps.map(p=>p.secs));
-  const avg = ps.length? ps.reduce((s,p)=>s+p.secs,0)/ps.length : 0;
-  ps.forEach(p=>{
-    const pct=Math.round(p.secs/max*100);
-    const cls = p.secs < avg*0.7 ? "low" : (p.secs < avg*0.95? "mid":"");
-    const onF = p.status==="field";
-    const row=document.createElement("div");
-    row.className="fbar";
-    row.innerHTML='<div class="lab">'+(onF?"🟢 ":"")+p.name.split(" ")[0]+'</div>'+
-      '<div class="track"><div class="fill '+cls+'" style="width:'+pct+'%"></div></div>'+
-      '<div class="fval">'+fmt(p.secs)+'</div>';
-    f.appendChild(row);
-  });
-  $("fairHint").textContent = ps.length? ("Average so far: "+fmt(Math.round(avg))+". Red = well below average (get them on), green dot = on the pitch now.") : "Mark players available in Setup.";
-}
-function renderSetup(){
-  const fs=$("formationSel");
-  if(fs.options.length===0){
-    Object.keys(FORMATIONS).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k+"  ("+FORMATIONS[k].def+" def, "+FORMATIONS[k].mid+" mid, "+FORMATIONS[k].fwd+" fwd)";fs.appendChild(o);});
-  }
-  fs.value=state.formation;
-  $("halfLen").value=state.halfLen; $("rotMin").value=state.rotMin;
-  const r=$("roster"); r.innerHTML="";
-  state.players.forEach(p=>{
-    const row=document.createElement("div"); row.className="prow";
-    const av='<div class="avatar">'+(p.num!==""?p.num:initials(p.name))+'</div>';
-    const prefLab={ANY:"Any",GK:"GK",DEF:"Def",MID:"Mid",FWD:"Fwd"}[p.pref];
-    row.innerHTML = av +
-      '<div class="grow" onclick="openEdit('+p.id+')">'+
-         '<div class="pname">'+p.name+'</div>'+
-         '<div class="pmeta"><span class="pref-pill">'+prefLab+'</span> '+(p.num!==""?("#"+p.num):"no number")+' · tap to edit</div>'+
-       '</div>';
-    const t=document.createElement("div");
-    t.className="toggle"+(p.available?" on":"");
-    t.innerHTML='<div class="knob"></div>';
-    t.onclick=()=>toggleAvail(p.id);
-    row.appendChild(t);
-    r.appendChild(row);
-  });
-  $("availCount").textContent = availPlayers().length+" available";
-}
-function updateLiveNumbers(){
+  $("halfBadge").textContent=state.running?("Half "+state.half+" · running"):(state.clock>0?("Half "+state.half+" · paused"):"Not started");
   $("clockDisp").textContent=fmt(state.clock);
   const over=state.clock>=state.halfLen*60;
   $("clockDisp").style.color=over?"var(--red)":"";
-  $("clockSub").textContent="Half length "+fmt(state.halfLen*60)+(over?" · TIME UP":"");
-  $("halfBadge").textContent="Half "+state.half+" · running";
-  renderGame(); renderFair();
+  $("clockSub").textContent="Half length "+fmt(Math.round(state.halfLen*60))+(over?" · TIME UP":"");
+  $("startBtn").textContent=state.running?"⏸ Pause":"▶ Start";
+  $("startBtn").className=state.running?"btn":"btn-grass";
+  $("hdrSub").textContent="7-a-side · "+state.formation+" · 2 halves";
 }
-window.onload=()=>{
-  if(state.running){ timer=setInterval(tick,1000); }
-  renderAll();
-};
+
+function inIds(){return plan?plan.map(p=>p.inId):[];}
+function outIds(){return plan?plan.map(p=>p.outId):[];}
+
+function renderPlan(){
+  const area=$("planArea");area.innerHTML="";
+  if(!plan||plan.length===0)return;
+  const due=rotSec()>0&&(state.clock-state.lastSubAt)>=rotSec();
+  const box=document.createElement("div");
+  box.className="planbox"+(due?" due":"");
+  let rows="";
+  plan.forEach(pr=>{const ip=P(pr.inId),op=P(pr.outId);if(!ip||!op)return;
+    rows+='<div class="pair"><span class="on">'+first(ip.name)+(ip.num!==""?" #"+ip.num:"")+'</span>'
+      +'<span class="arrow">ON ▶ for</span><span class="off">'+first(op.name)+'</span>'
+      +'<span class="rl">'+pr.role+'</span></div>';});
+  box.innerHTML='<div class="planhead"><span>'+(due?"⏰ Time to rotate":"Substitutions ready")+' — '+plan.length+' '+(plan.length>1?"subs":"sub")+'</span></div>'
+    +rows
+    +'<div class="btn-row" style="margin-top:8px">'
+    +'<button class="btn-grass" onclick="applyPlan()">✅ Make all subs</button>'
+    +'<button class="btn-ghost" onclick="planNow()">↻ Re-plan</button>'
+    +'<button class="btn-ghost" onclick="cancelPlan()">✕</button></div>'
+    +'<div class="hint">Tell each player who they are replacing — they go on when you call their name.</div>';
+  area.appendChild(box);
+}
+
+function renderGame(){
+  const pit=$("pitch");
+  pit.innerHTML='<div class="line"></div><div class="circle"></div><div class="box top"></div><div class="box bot"></div>';
+  const xy=slotXY(),sl=slots(),outs=outIds();
+  sl.forEach((s,i)=>{
+    const xyc=xy[i];const x=xyc[0],y=xyc[1];const pl=fieldPlayers().find(p=>p.slot===i);
+    const d=document.createElement("div");d.className="slot";d.style.left=x+"%";d.style.top=y+"%";
+    const isGK=s.role==="GK";
+    if(pl){
+      const off=outs.includes(pl.id);
+      d.innerHTML='<div class="role">'+(isGK?"GK":s.role)+'</div>'
+        +'<div class="chip '+(isGK?'gk':'')+' '+(sel===pl.id?'sel':'')+' '+(off?'off':'')+'">'+(pl.num!==""?pl.num:initials(pl.name))+'</div>'
+        +'<div class="nm">'+first(pl.name)+'</div><div class="mins">'+fmt(pl.secs)+'</div>';
+      d.onclick=(function(id){return function(){tapPlayer(id);};})(pl.id);
+    }else{
+      d.innerHTML='<div class="role">'+(isGK?"GK":s.role)+'</div>'
+        +'<div class="chip" style="border-style:dashed;border-color:#fff;background:rgba(255,255,255,.25);color:#fff">+</div>'
+        +'<div class="nm">empty</div>';
+      d.onclick=(function(idx){return function(){if(sel!==null&&P(sel).status==="bench"){const b=P(sel);b.status="field";b.slot=idx;sel=null;save();renderGame();renderFair();}};})(i);
+    }
+    pit.appendChild(d);
+  });
+  const b=$("bench");b.innerHTML="";
+  const ins=inIds();
+  const bp=benchPlayers().sort((a,b)=>a.secs-b.secs);
+  $("benchCount").textContent="("+bp.length+")";
+  if(bp.length===0)b.innerHTML='<div class="small">No bench players available.</div>';
+  bp.forEach(p=>{
+    const c=document.createElement("div");
+    c.className="bchip"+(sel===p.id?" sel":"")+(ins.includes(p.id)?" on":"");
+    c.innerHTML='<div class="av">'+(p.num!==""?p.num:initials(p.name))+'</div>'
+      +'<div class="bn">'+first(p.name)+'</div><div class="bm">'+fmt(p.secs)+'</div>';
+    c.onclick=(function(id){return function(){tapPlayer(id);};})(p.id);
+    b.appendChild(c);
+  });
+  const everyTxt=state.subsPer==="all"?"the whole bench":(state.subsPer+" at a time");
+  $("rotHint").textContent=state.rotMin>0?("Auto-prompts to roll "+everyTxt+" every "+state.rotMin+" min. Or plan a rotation now."):"Rotation prompts off. Plan subs manually.";
+  renderPlan();
+}
+
+function renderFair(){
+  const f=$("fairness");f.innerHTML="";
+  const ps=availPlayers().slice().sort((a,b)=>a.secs-b.secs);
+  const max=Math.max(60,...ps.map(p=>p.secs));
+  const avg=ps.length?ps.reduce((s,p)=>s+p.secs,0)/ps.length:0;
+  ps.forEach(p=>{
+    const pct=Math.round(p.secs/max*100);
+    const cls=p.secs<avg*0.7?"low":(p.secs<avg*0.95?"mid":"");
+    const onF=p.status==="field";
+    const row=document.createElement("div");row.className="fbar";
+    row.innerHTML='<div class="lab">'+(onF?"🟢 ":"")+first(p.name)+'</div>'
+      +'<div class="track"><div class="fill '+cls+'" style="width:'+pct+'%"></div></div>'
+      +'<div class="fval">'+fmt(p.secs)+'</div>';
+    f.appendChild(row);
+  });
+  $("fairHint").textContent=ps.length?("Average so far "+fmt(Math.round(avg))+". Red = below average (get them on), 🟢 = on now."):"Mark players available in Setup.";
+}
+
+function renderSetup(){
+  const fs=$("formationSel");
+  if(fs.options.length===0)Object.keys(FORMATIONS).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k+"  ("+FORMATIONS[k].def+" def, "+FORMATIONS[k].mid+" mid, "+FORMATIONS[k].fwd+" fwd)";fs.appendChild(o);});
+  fs.value=state.formation;
+  $("halfLen").value=state.halfLen;$("rotMin").value=state.rotMin;$("subsPer").value=state.subsPer;
+  const r=$("roster");r.innerHTML="";
+  state.players.forEach(p=>{
+    const row=document.createElement("div");row.className="prow";
+    const pills="G"+rate(p,"GK")+" D"+rate(p,"DEF")+" M"+rate(p,"MID")+" A"+rate(p,"FWD");
+    row.innerHTML='<div class="avatar">'+(p.num!==""?p.num:initials(p.name))+'</div>'
+      +'<div class="grow" onclick="openEdit('+p.id+')">'
+      +'<div class="pname">'+p.name+'</div>'
+      +'<div class="pmeta"><span class="rate-pill">'+pills+'</span> '+(p.num!==""?("#"+p.num):"no #")+' · tap to edit</div></div>';
+    const t=document.createElement("div");t.className="toggle"+(p.available?" on":"");
+    t.innerHTML='<div class="knob"></div>';t.onclick=(function(id){return function(){toggleAvail(id);};})(p.id);
+    row.appendChild(t);r.appendChild(row);
+  });
+  $("availCount").textContent=availPlayers().length+" available";
+}
+
+function updateLive(){
+  $("clockDisp").textContent=fmt(state.clock);
+  const over=state.clock>=state.halfLen*60;
+  $("clockDisp").style.color=over?"var(--red)":"";
+  $("clockSub").textContent="Half length "+fmt(Math.round(state.halfLen*60))+(over?" · TIME UP":"");
+  $("halfBadge").textContent="Half "+state.half+" · running";
+  renderGame();renderFair();
+}
+
+window.onload=function(){ if(state.running)timer=setInterval(tick,1000); renderAll(); };
 </script>
 </body>
 </html>
